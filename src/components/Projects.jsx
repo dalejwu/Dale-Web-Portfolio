@@ -2,10 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowUpRight, Github, ExternalLink, X, CheckCircle2, Layers, Cpu, Database, Terminal, Shield, Sparkles } from 'lucide-react';
 import sereneDentalImg from '../assets/serene-dental.webp';
+import SchemaGraph from './SchemaGraph';
 import './Projects.css';
 
 export default function Projects() {
   const [activeModalProject, setActiveModalProject] = useState(null);
+  const [modalTab, setModalTab] = useState('spec');
+
+  const openModal = (project, tab = 'spec') => {
+    setActiveModalProject(project);
+    setModalTab(tab);
+  };
 
   const projects = [
     {
@@ -99,7 +106,7 @@ export default function Projects() {
             <div
               key={project.id}
               className="project-card glass-panel bracket-container featured-card"
-              onClick={() => setActiveModalProject(project)}
+              onClick={() => openModal(project, 'spec')}
             >
               <div className="corner-bracket tl" />
               <div className="corner-bracket tr" />
@@ -176,17 +183,31 @@ export default function Projects() {
 
                 <div className="card-action-bar font-mono">
                   <span className="inspect-label">CLICK CARD TO INSPECT ARCHITECTURE &gt;</span>
-                  <a
-                    href={project.demo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="card-live-link"
-                    onClick={(e) => e.stopPropagation()}
-                    aria-label={`Open live site for ${project.title}`}
-                  >
-                    <span>VISIT LIVE SITE</span>
-                    <ExternalLink size={13} />
-                  </a>
+                  <div className="card-action-group">
+                    <button
+                      type="button"
+                      className="card-schema-btn font-mono"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openModal(project, 'schema');
+                      }}
+                      aria-label="Inspect interactive database schema"
+                    >
+                      <Database size={13} className="text-green" />
+                      <span>INTERACTIVE ER SCHEMA</span>
+                    </button>
+                    <a
+                      href={project.demo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="card-live-link"
+                      onClick={(e) => e.stopPropagation()}
+                      aria-label={`Open live site for ${project.title}`}
+                    >
+                      <span>VISIT LIVE SITE</span>
+                      <ExternalLink size={13} />
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -216,8 +237,29 @@ export default function Projects() {
             <div className="modal-titlebar font-mono">
               <div className="modal-titlebar-left">
                 <Terminal size={14} className="modal-icon" />
-                <span>SPECIFICATION // {activeModalProject.id.toUpperCase()}</span>
+                <span className="modal-spec-label">SPECIFICATION // {activeModalProject.id.toUpperCase()}</span>
               </div>
+
+              {/* Mode Toggle Switcher */}
+              <div className="modal-mode-tabs font-mono">
+                <button
+                  type="button"
+                  className={`mode-tab-btn ${modalTab === 'spec' ? 'active' : ''}`}
+                  onClick={() => setModalTab('spec')}
+                >
+                  SYSTEM SPECIFICATION
+                </button>
+                <button
+                  type="button"
+                  className={`mode-tab-btn ${modalTab === 'schema' ? 'active' : ''}`}
+                  onClick={() => setModalTab('schema')}
+                >
+                  <Database size={12} className="text-green" />
+                  <span>INTERACTIVE ER SCHEMA</span>
+                  <span className="mode-live-pill">LIVE 60FPS</span>
+                </button>
+              </div>
+
               <button
                 type="button"
                 className="modal-close-btn"
@@ -228,8 +270,9 @@ export default function Projects() {
               </button>
             </div>
 
-            {/* Modal Split Content */}
-            <div className="modal-body-split">
+            {/* Modal Body: Either Spec or Schema Graph */}
+            {modalTab === 'spec' ? (
+              <div className="modal-body-split">
               {/* Left Column: Architecture & Key Specs */}
               <div className="modal-col-left">
                 {activeModalProject.image && (
@@ -348,6 +391,11 @@ export default function Projects() {
                 </div>
               </div>
             </div>
+          ) : (
+            <div className="modal-schema-view">
+              <SchemaGraph />
+            </div>
+          )}
           </div>
         </div>,
         document.body
