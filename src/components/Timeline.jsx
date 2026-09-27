@@ -62,6 +62,7 @@ export default function Timeline() {
       organization: 'Western Mindanao State University',
       category: 'academic',
       badge: 'COLLEGE (UNDERGRAD)',
+      logo: '/wmsu-seal.jpg',
       isCurrent: false,
       summary: 'Rigorous undergraduate curriculum in computer science and information technology, mastering systems design, algorithm analysis, web technologies, and database engineering at Western Mindanao State University.',
       highlights: [
@@ -79,6 +80,7 @@ export default function Timeline() {
       organization: 'Immaculate Conception Archdiocesan School',
       category: 'academic',
       badge: 'HIGH SCHOOL',
+      logo: '/icas-seal.png',
       isCurrent: false,
       summary: 'Formative secondary education foundation emphasizing mathematics, sciences, institutional values, and early computational and technical literacy at Immaculate Conception Archdiocesan School.',
       highlights: [
@@ -178,8 +180,20 @@ export default function Timeline() {
                     <div className="corner-bracket bl" />
                     <div className="corner-bracket br" />
 
+                    {/* Academic Institution Official Seal Stamp */}
+                    {milestone.logo && (
+                      <div className="node-seal-stamp" title={`${milestone.organization} Official Seal`}>
+                        <img
+                          src={milestone.logo}
+                          alt={`${milestone.organization} Official Seal`}
+                          className="node-seal-img"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
+
                     {/* Node Header Row */}
-                    <div className="node-header" onClick={() => toggleNode(milestone.id)}>
+                    <div className={`node-header ${milestone.logo ? 'node-has-logo' : ''}`} onClick={() => toggleNode(milestone.id)}>
                       <div className="node-meta font-mono">
                         <span className="node-phase">{milestone.phase}</span>
                         <span className="node-year">
