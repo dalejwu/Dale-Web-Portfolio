@@ -4,7 +4,7 @@ import { playBootSound, playClick } from '../utils/sound';
 import './IntroSequence.css';
 
 const BOOT_LOGS = [
-  'INITIALIZING KERNEL: Florenz Dale OS v2.6.4 (x86_64-win32)',
+  'INITIALIZING KERNEL: DALEJWU OS v2.6.4 (x86_64-win32)',
   'VERIFYING CORE MODULES: React, TypeScript, Node.js, Distributed APIs',
   'ESTABLISHING TELEMETRY: Sub-50ms Latency // 99.9% Uptime Target',
   'COMPILING BLUEPRINTS: Cyber-Manga Brutalism Engine Ready',
@@ -93,7 +93,7 @@ export default function IntroSequence({ onComplete }) {
       <div className="intro-topbar font-mono">
         <div className="intro-topbar-left">
           <Terminal size={14} className="intro-icon" />
-          <span>BIOS_POST // FLORENZ DALE KERNEL</span>
+          <span>BIOS_POST // DALEJWU KERNEL</span>
         </div>
         <button
           type="button"
@@ -123,7 +123,7 @@ export default function IntroSequence({ onComplete }) {
         </div>
 
         <h1 className="intro-brand-title font-display">
-          FLORENZ DALE
+          DALEJWU
         </h1>
 
         <div className="intro-role-tag font-mono">
