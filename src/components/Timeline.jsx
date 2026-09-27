@@ -105,7 +105,7 @@ export default function Timeline() {
             <div className="corner-bracket bl" />
             <div className="corner-bracket br" />
             <span className="badge-bullet">// 02</span>
-            <span>BATTLE SCARS &amp; MILESTONES</span>
+            <span>TRAJECTORY &amp; LEVEL-UPS</span>
           </div>
 
           <div className="timeline-filter-tabs font-mono">
@@ -145,10 +145,10 @@ export default function Timeline() {
         {/* Section Title Banner */}
         <div className="timeline-title-banner">
           <h2 className="timeline-display-title font-display">
-            THINGS I'VE BROKEN &amp; SUCCESSFULLY FIXED
+            FROM FIRST 'HELLO WORLD' TO PRODUCTION ARCHITECT
           </h2>
           <p className="timeline-subtitle font-mono">
-            // BATTLE-TESTED CHRONOLOGY: PRODUCTION INCIDENTS, ACADEMIC WINS &amp; SCALED ROLLOUTS
+            // THE CHRONOLOGY: ACADEMIC FOUNDATIONS, COMMERCIAL SCALE &amp; SYSTEM ARCHITECTURE
           </p>
         </div>
 

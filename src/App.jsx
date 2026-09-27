@@ -24,15 +24,6 @@ export default function App() {
     setSfxEnabled(nextState);
   };
 
-  const triggerKonamiCheat = () => {
-    const keys = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-    keys.forEach((key, i) => {
-      setTimeout(() => {
-        window.dispatchEvent(new KeyboardEvent('keydown', { key }));
-      }, i * 35);
-    });
-  };
-
   return (
     <div className="portfolio-app">
       {/* Subtle Binary Code Rain Canvas */}
@@ -101,21 +92,9 @@ export default function App() {
               <div className="corner-bracket br" />
 
               <div className="hero-content">
-                <div className="hero-badge-row">
-                  <div className="hero-badge font-mono">
-                    <Terminal size={14} className="badge-icon" />
-                    <span>INITIALIZING WORKSPACE // v2.6.4</span>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={triggerKonamiCheat}
-                    className="hero-konami-hint font-mono"
-                    title="Cheat Code: Enter on keyboard or click to trigger Overdrive"
-                  >
-                    <span className="hint-prompt">&gt; CHEAT:</span>
-                    <span className="hint-seq">↑ ↑ ↓ ↓ ← → ← → B A</span>
-                  </button>
+                <div className="hero-badge font-mono">
+                  <Terminal size={14} className="badge-icon" />
+                  <span>INITIALIZING WORKSPACE // v2.6.4</span>
                 </div>
 
                 <h1 className="hero-title font-display">
@@ -187,20 +166,6 @@ export default function App() {
           <div className="footer-left font-mono">
             <span>&copy; {new Date().getFullYear()} FLORENZ DALE C. PAÑA. ALL RIGHTS RESERVED.</span>
             <span className="footer-dim">// CYBER-TERMINAL WORKSTATION</span>
-          </div>
-
-          {/* Footer Easter Egg Hint Chip */}
-          <div className="footer-easter-egg">
-            <button
-              type="button"
-              onClick={triggerKonamiCheat}
-              className="konami-hint-chip font-mono"
-              title="Click or press on keyboard: Up Up Down Down Left Right Left Right B A"
-              aria-label="Unlock Secret Overdrive Mode"
-            >
-              <span className="hint-keys">↑ ↑ ↓ ↓ ← → ← → B A</span>
-              <span className="hint-tag">// SECRET PROTOCOL</span>
-            </button>
           </div>
 
           <div className="footer-socials">

@@ -157,15 +157,6 @@
   border-radius: 4px;
 }
 
-.hero-badge-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 1.5rem;
-}
-
 .hero-badge {
   display: inline-flex;
   align-items: center;
@@ -176,38 +167,7 @@
   color: var(--text-secondary);
   font-size: 0.75rem;
   letter-spacing: 0.08em;
-}
-
-.hero-konami-hint {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.3rem 0.65rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px dashed var(--border-subtle);
-  color: var(--text-dim);
-  font-size: 0.6875rem;
-  cursor: pointer;
-  border-radius: 2px;
-  transition: all var(--transition-fast);
-}
-
-.hero-konami-hint .hint-prompt {
-  color: var(--text-muted);
-}
-
-.hero-konami-hint .hint-seq {
-  color: var(--accent-green);
-  font-weight: 700;
-  letter-spacing: 0.1em;
-}
-
-.hero-konami-hint:hover {
-  border-color: var(--accent-green);
-  border-style: solid;
-  color: var(--text-primary);
-  background: rgba(74, 222, 128, 0.08);
-  box-shadow: 0 0 10px var(--accent-green-glow);
+  margin-bottom: 1.5rem;
 }
 
 .badge-icon {
@@ -310,45 +270,6 @@
 
 .footer-dim {
   color: var(--text-dim);
-}
-
-.footer-easter-egg {
-  display: flex;
-  align-items: center;
-}
-
-.konami-hint-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0.75rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-dim);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.konami-hint-chip .hint-keys {
-  color: var(--accent-green);
-  letter-spacing: 0.15em;
-  font-weight: 700;
-}
-
-.konami-hint-chip .hint-tag {
-  color: var(--text-muted);
-}
-
-.konami-hint-chip:hover {
-  border-color: var(--accent-green);
-  color: var(--text-primary);
-  background: rgba(74, 222, 128, 0.08);
-  box-shadow: 0 0 12px var(--accent-green-glow);
-  transform: translateY(-1px);
 }
 
 .footer-socials {
