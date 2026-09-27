@@ -10,7 +10,7 @@ export default function Workstation() {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [terminalLogs, setTerminalLogs] = useState([
     { type: 'sys', text: 'INIT_KERNEL: Florenz Dale OS v2.6.4 (x86_64-win32)' },
-    { type: 'sys', text: 'WORKSPACE: Ready. Type "help" or click presets below.' }
+    { type: 'sys', text: 'WORKSPACE: Ready. Type "help" or click presets. (Easter Egg: ↑ ↑ ↓ ↓ ← → ← → B A)' }
   ]);
 
   useEffect(() => {
@@ -83,8 +83,18 @@ export default function Workstation() {
       case 'help':
         newLogs.push({
           type: 'res',
-          text: 'Available commands: "skills", "stack", "specs", "academic", "recruiter", "hack", "coffee", "sudo", "philosophy", "clear"'
+          text: 'Available commands: "skills", "stack", "specs", "academic", "recruiter", "hack", "arcade", "coffee", "sudo", "philosophy", "clear". Classified: Arcade sequence [↑ ↑ ↓ ↓ ← → ← → B A].'
         });
+        break;
+      case 'arcade':
+      case 'konami':
+      case 'cheat':
+        newLogs.push({
+          type: 'res',
+          text: '⚡ INJECTING KONAMI SEQUENCE... [↑ ↑ ↓ ↓ ← → ← → B A] // OVERDRIVE ENGAGED.'
+        });
+        const cheatKeys = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        cheatKeys.forEach((key, i) => setTimeout(() => window.dispatchEvent(new KeyboardEvent('keydown', { key })), i * 35));
         break;
       case 'recruiter':
         newLogs.push({
@@ -278,6 +288,9 @@ export default function Workstation() {
                   </button>
                   <button type="button" onClick={() => handleCommand('hack')} className="preset-btn">
                     hack
+                  </button>
+                  <button type="button" onClick={() => handleCommand('arcade')} className="preset-btn" title="Cheat: triggers Overdrive mode">
+                    arcade
                   </button>
                   <button type="button" onClick={() => handleCommand('specs')} className="preset-btn">
                     specs
