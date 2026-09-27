@@ -117,7 +117,7 @@ export default function Workstation() {
       case 'hack':
         newLogs.push({
           type: 'res',
-          text: '⚡ ACCESSING MAINFRAME... [STATUS: 200 OK] // ROOT KEY BYPASS: "DALE_KERNEL_SEC" // HINT: Type the Konami Code on your keyboard (↑ ↑ ↓ ↓ ← → ← → B A) to engage Overdrive mode!'
+          text: '⚡ ACCESSING MAINFRAME... [STATUS: 200 OK] // ROOT KEY BYPASS: "DALE_KERNEL_SEC" // HINT: Try (↑ ↑ ↓ ↓ ← → ← → B A) see what happens..'
         });
         break;
       case 'coffee':
@@ -295,8 +295,8 @@ export default function Workstation() {
                 <div className="os-window-controls">
                   <button className="win-btn win-min" aria-label="Minimize">_</button>
                   <button className="win-btn win-max" aria-label="Maximize">❑</button>
-                  <button 
-                    className="win-btn win-close" 
+                  <button
+                    className="win-btn win-close"
                     aria-label="Close or Reset"
                     onClick={() => {
                       playClick(600, 0.03);
