@@ -10,7 +10,10 @@ import {
   Flame, 
   ShieldAlert, 
   X,
-  Play
+  Play,
+  User,
+  Medal,
+  Sliders
 } from 'lucide-react';
 import { 
   playBugSquashSound, 
@@ -33,8 +36,8 @@ const BUG_LABELS = [
 ];
 
 const CHECKMARK_LABELS = [
-  'LGTM // DECEPTIVE',
-  'ALL_GREEN (FALSE)',
+  'LGTM // FALSE',
+  'ALL_GREEN (FAILS)',
   'CI_PASSED ⚠️',
   'SKIPPED_TESTS',
   'STRAY_CHECK ⚠️'
@@ -46,8 +49,60 @@ const COFFEE_LABELS = [
   'DOUBLE_SHOT // +5s'
 ];
 
+const DIFFICULTY_CONFIG = {
+  easy: {
+    label: 'EASY',
+    tag: 'STAGING SANDBOX',
+    time: 30,
+    spawnInterval: 780,
+    bugLifetime: 3000,
+    coffeeLifetime: 2800,
+    checkLifetime: 3000,
+    bugPoints: 100,
+    penaltyBugs: 1,
+    penaltyPoints: 100,
+    checkRate: 0.15
+  },
+  medium: {
+    label: 'MEDIUM',
+    tag: 'PRODUCTION HOTFIX',
+    time: 25,
+    spawnInterval: 600,
+    bugLifetime: 2200,
+    coffeeLifetime: 2400,
+    checkLifetime: 2500,
+    bugPoints: 150,
+    penaltyBugs: 2,
+    penaltyPoints: 200,
+    checkRate: 0.22
+  },
+  hard: {
+    label: 'HARD',
+    tag: '3 AM PAGERDUTY CHAOS',
+    time: 20,
+    spawnInterval: 460,
+    bugLifetime: 1400,
+    coffeeLifetime: 1800,
+    checkLifetime: 2000,
+    bugPoints: 250,
+    penaltyBugs: 3,
+    penaltyPoints: 300,
+    checkRate: 0.32
+  }
+};
+
+const DEFAULT_LEADERBOARD = [
+  { id: 1, name: 'DALEJWU', bugs: 32, score: 5800, diff: 'HARD', date: '2026-09-27' },
+  { id: 2, name: 'SYS_ARCHITECT', bugs: 26, score: 4100, diff: 'HARD', date: '2026-09-27' },
+  { id: 3, name: 'PROD_SAVIOR', bugs: 21, score: 3250, diff: 'MED', date: '2026-09-26' },
+  { id: 4, name: 'DEV_ZERO', bugs: 17, score: 2550, diff: 'MED', date: '2026-09-26' },
+  { id: 5, name: 'REACTIVE_KID', bugs: 13, score: 1650, diff: 'EASY', date: '2026-09-25' }
+];
+
 export default function BugHunterGame({ onExit }) {
   const [gameState, setGameState] = useState('idle'); // 'idle' | 'playing' | 'gameover'
+  const [startTab, setStartTab] = useState('rules'); // 'rules' | 'leaderboard'
+  const [difficulty, setDifficulty] = useState('medium');
   const [bugsFixed, setBugsFixed] = useState(0);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(25);
@@ -59,6 +114,19 @@ export default function BugHunterGame({ onExit }) {
   const [screenFlash, setScreenFlash] = useState(''); // 'penalty' | 'bonus' | ''
   const [highScore, setHighScore] = useState({ bugs: 0, score: 0 });
 
+  // Leaderboard & Player Name states
+  const [leaderboard, setLeaderboard] = useState(() => {
+    try {
+      const saved = localStorage.getItem('dale_bughunter_leaderboard');
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // Fallback
+    }
+    return DEFAULT_LEADERBOARD;
+  });
+  const [playerName, setPlayerName] = useState('');
+  const [hasSubmittedScore, setHasSubmittedScore] = useState(false);
+
   const arenaRef = useRef(null);
   const nextEntityId = useRef(1);
   const nextFloaterId = useRef(1);
@@ -69,6 +137,10 @@ export default function BugHunterGame({ onExit }) {
       const saved = localStorage.getItem('dale_bughunter_highscore');
       if (saved) {
         setHighScore(JSON.parse(saved));
+      }
+      const savedName = localStorage.getItem('dale_bughunter_player_name');
+      if (savedName) {
+        setPlayerName(savedName);
       }
     } catch {
       // LocalStorage access fallback
@@ -87,15 +159,17 @@ export default function BugHunterGame({ onExit }) {
   // Start game loop
   const startGame = () => {
     playClick(600, 0.05);
+    const config = DIFFICULTY_CONFIG[difficulty];
     setBugsFixed(0);
     setScore(0);
-    setTimeLeft(25);
+    setTimeLeft(config.time);
     setStreak(0);
     setPenalties(0);
     setCoffees(0);
     setEntities([]);
     setFloaters([]);
     setScreenFlash('');
+    setHasSubmittedScore(false);
     setGameState('playing');
   };
 
@@ -122,7 +196,7 @@ export default function BugHunterGame({ onExit }) {
       setGameState('gameover');
       playGameOverSound();
 
-      // Persist High Score
+      // Persist all-time High Score
       setHighScore((prev) => {
         const isNewBest = score > prev.score || bugsFixed > prev.bugs;
         const newBest = {
@@ -145,34 +219,35 @@ export default function BugHunterGame({ onExit }) {
   useEffect(() => {
     if (gameState !== 'playing') return;
 
+    const config = DIFFICULTY_CONFIG[difficulty];
+
     const spawner = setInterval(() => {
       setEntities((current) => {
-        // Clean up expired entities first
         const now = Date.now();
         const active = current.filter((e) => e.expiresAt > now);
 
-        if (active.length >= 4) return active;
+        // Max entities on screen
+        const maxActive = difficulty === 'hard' ? 5 : 4;
+        if (active.length >= maxActive) return active;
 
-        // Determine entity type:
-        // 65% Bug, 20% Stray Checkmark, 15% Coffee
         const roll = Math.random();
         let type = 'bug';
         let label = BUG_LABELS[Math.floor(Math.random() * BUG_LABELS.length)];
-        let lifetime = 2200;
+        let lifetime = config.bugLifetime;
 
         if (roll > 0.85) {
           type = 'coffee';
           label = COFFEE_LABELS[Math.floor(Math.random() * COFFEE_LABELS.length)];
-          lifetime = 2400;
-        } else if (roll > 0.65) {
+          lifetime = config.coffeeLifetime;
+        } else if (roll < config.checkRate) {
           type = 'checkmark';
           label = CHECKMARK_LABELS[Math.floor(Math.random() * CHECKMARK_LABELS.length)];
-          lifetime = 2600;
+          lifetime = config.checkLifetime;
         }
 
-        // Bounded coordinate percentages (keep inside padding)
+        // Bounded coordinate percentages
         const x = Math.floor(Math.random() * 74) + 12; // 12% to 86%
-        const y = Math.floor(Math.random() * 66) + 14; // 14% to 80%
+        const y = Math.floor(Math.random() * 64) + 16; // 16% to 80%
 
         const newEntity = {
           id: nextEntityId.current++,
@@ -186,21 +261,20 @@ export default function BugHunterGame({ onExit }) {
 
         return [...active, newEntity];
       });
-    }, 620);
+    }, config.spawnInterval);
 
     return () => clearInterval(spawner);
-  }, [gameState]);
+  }, [gameState, difficulty]);
 
   // Handle entity clicks
   const handleEntityClick = (entity, e) => {
     e.stopPropagation();
 
-    // Calculate click coordinates relative to arena for floater positioning
+    const config = DIFFICULTY_CONFIG[difficulty];
     const arenaRect = arenaRef.current?.getBoundingClientRect();
     const clickX = arenaRect ? ((e.clientX - arenaRect.left) / arenaRect.width) * 100 : entity.x;
     const clickY = arenaRect ? ((e.clientY - arenaRect.top) / arenaRect.height) * 100 : entity.y;
 
-    // Immediately remove clicked entity
     setEntities((prev) => prev.filter((item) => item.id !== entity.id));
 
     if (entity.type === 'bug') {
@@ -208,7 +282,7 @@ export default function BugHunterGame({ onExit }) {
       playBugSquashSound();
       setStreak((s) => s + 1);
       const mult = Math.min(4, Math.floor(streak / 3) + 1);
-      const points = 100 * mult;
+      const points = config.bugPoints * mult;
 
       setBugsFixed((b) => b + 1);
       setScore((s) => s + points);
@@ -216,16 +290,16 @@ export default function BugHunterGame({ onExit }) {
     } else if (entity.type === 'checkmark') {
       // ⚠️ PENALTY CHECKMARK (FALSE POSITIVE)
       playPenaltySound();
-      setStreak(0); // break streak
+      setStreak(0);
       setPenalties((p) => p + 1);
 
-      setBugsFixed((b) => Math.max(0, b - 2));
-      setScore((s) => Math.max(0, s - 200));
+      setBugsFixed((b) => Math.max(0, b - config.penaltyBugs));
+      setScore((s) => Math.max(0, s - config.penaltyPoints));
 
       setScreenFlash('penalty');
       setTimeout(() => setScreenFlash(''), 350);
 
-      addFloater('⚠️ REGRESSION! -2 BUGS (-200)', 'penalty', clickX, clickY);
+      addFloater(`⚠️ REGRESSION! -${config.penaltyBugs} BUGS (-${config.penaltyPoints})`, 'penalty', clickX, clickY);
     } else if (entity.type === 'coffee') {
       // ☕ COFFEE CUP POWERUP
       playBonusSound();
@@ -237,6 +311,36 @@ export default function BugHunterGame({ onExit }) {
       setTimeout(() => setScreenFlash(''), 350);
 
       addFloater('☕ +5s CAFFEINE BOOST! (+150)', 'bonus', clickX, clickY);
+    }
+  };
+
+  // Save score to leaderboard
+  const handleSaveScore = (e) => {
+    e.preventDefault();
+    const cleanName = (playerName.trim() || 'ANONYMOUS_DEV').toUpperCase().slice(0, 14);
+    playClick(650, 0.04);
+
+    const newEntry = {
+      id: Date.now(),
+      name: cleanName,
+      bugs: bugsFixed,
+      score,
+      diff: DIFFICULTY_CONFIG[difficulty].label,
+      date: new Date().toISOString().split('T')[0]
+    };
+
+    const updated = [...leaderboard, newEntry]
+      .sort((a, b) => b.score - a.score || b.bugs - a.bugs)
+      .slice(0, 10);
+
+    setLeaderboard(updated);
+    setHasSubmittedScore(true);
+
+    try {
+      localStorage.setItem('dale_bughunter_leaderboard', JSON.stringify(updated));
+      localStorage.setItem('dale_bughunter_player_name', cleanName);
+    } catch {
+      // Fallback
     }
   };
 
@@ -300,6 +404,11 @@ export default function BugHunterGame({ onExit }) {
           </span>
         </div>
 
+        <div className="hud-metric metric-diff">
+          <span className="hud-label">LVL:</span>
+          <span className={`diff-badge diff-${difficulty}`}>{DIFFICULTY_CONFIG[difficulty].label}</span>
+        </div>
+
         {streak >= 3 && (
           <div className="hud-metric metric-streak">
             <Flame size={14} className="hud-icon text-amber" />
@@ -335,7 +444,7 @@ export default function BugHunterGame({ onExit }) {
         </div>
       </div>
 
-      {/* Main Interactive Arena */}
+      {/* Main Interactive Arena Surface */}
       <div 
         ref={arenaRef}
         className="game-arena-surface bracket-container"
@@ -346,7 +455,7 @@ export default function BugHunterGame({ onExit }) {
         <div className="corner-bracket bl" />
         <div className="corner-bracket br" />
 
-        {/* Scanlines & CRT Grid */}
+        {/* Scanlines & Halftone Grid */}
         <div className="arena-grid-overlay" />
         <div className="arena-scanlines" />
 
@@ -359,62 +468,117 @@ export default function BugHunterGame({ onExit }) {
               <div className="corner-bracket bl" />
               <div className="corner-bracket br" />
 
-              <div className="card-badge font-mono">
-                <ShieldAlert size={13} />
-                <span>INCIDENT PROTOCOL // v2.6</span>
+              {/* Header with Title and Mode Switcher */}
+              <div className="start-card-header">
+                <div className="card-badge font-mono">
+                  <ShieldAlert size={12} />
+                  <span>INCIDENT PROTOCOL // v2.6.4</span>
+                </div>
+                <div className="start-mode-toggle font-mono">
+                  <button
+                    type="button"
+                    className={`start-tab-btn ${startTab === 'rules' ? 'active' : ''}`}
+                    onClick={() => {
+                      playClick(500, 0.02);
+                      setStartTab('rules');
+                    }}
+                  >
+                    MISSION BRIEF
+                  </button>
+                  <button
+                    type="button"
+                    className={`start-tab-btn ${startTab === 'leaderboard' ? 'active' : ''}`}
+                    onClick={() => {
+                      playClick(500, 0.02);
+                      setStartTab('leaderboard');
+                    }}
+                  >
+                    <Trophy size={11} className="tab-trophy-icon" />
+                    <span>LEADERBOARD</span>
+                  </button>
+                </div>
               </div>
 
               <h3 className="start-title font-display">BUG TRIAGE SIMULATOR</h3>
-              <p className="start-subtitle font-mono">
-                // CRITICAL INCIDENT REPORT: PRODUCTION CORRUPTION IN PROGRESS
-              </p>
 
-              <div className="rules-grid">
-                <div className="rule-item rule-bug">
-                  <div className="rule-icon-box bug-box">
-                    <Bug size={18} />
-                  </div>
-                  <div className="rule-desc">
-                    <span className="rule-name">SQUASH BUGS</span>
-                    <span className="rule-detail">+1 Bug Fixed // +100 Pts // Boosts Streak</span>
-                  </div>
-                </div>
+              {startTab === 'rules' ? (
+                <>
+                  {/* Compact Mission Rules */}
+                  <div className="rules-compact-grid">
+                    <div className="compact-rule-chip rule-chip-bug">
+                      <Bug size={14} className="text-red" />
+                      <span className="chip-name">SQUASH BUGS</span>
+                      <span className="chip-val text-green">+1 Fixed // Streak</span>
+                    </div>
 
-                <div className="rule-item rule-coffee">
-                  <div className="rule-icon-box coffee-box">
-                    <Coffee size={18} />
-                  </div>
-                  <div className="rule-desc">
-                    <span className="rule-name">COFFEE SPIKE</span>
-                    <span className="rule-detail">+5s Extra Time // +150 Pts</span>
-                  </div>
-                </div>
+                    <div className="compact-rule-chip rule-chip-coffee">
+                      <Coffee size={14} className="text-amber" />
+                      <span className="chip-name">COFFEE SPIKE</span>
+                      <span className="chip-val text-amber">+5s Extra Time</span>
+                    </div>
 
-                <div className="rule-item rule-checkmark">
-                  <div className="rule-icon-box check-box">
-                    <CheckCircle2 size={18} />
+                    <div className="compact-rule-chip rule-chip-check">
+                      <CheckCircle2 size={14} className="text-green" />
+                      <span className="chip-name">STRAY CHECKMARK</span>
+                      <span className="chip-val text-red">AVOID! Penalty</span>
+                    </div>
                   </div>
-                  <div className="rule-desc">
-                    <span className="rule-name">STRAY CHECKMARK</span>
-                    <span className="rule-detail text-red">DO NOT CLICK! False Positive Regression (-2 Bugs, -200 Pts)</span>
-                  </div>
-                </div>
-              </div>
 
-              {highScore.bugs > 0 && (
-                <div className="high-score-banner font-mono">
-                  <Trophy size={14} className="text-amber" />
-                  <span>ALL-TIME RECORD: {highScore.bugs} BUGS FIXED // {highScore.score} PTS</span>
+                  {/* Level / Difficulty Selector */}
+                  <div className="difficulty-box font-mono">
+                    <div className="diff-header">
+                      <Sliders size={12} className="diff-icon" />
+                      <span className="diff-title">CHOOSE INCIDENT SEVERITY:</span>
+                      <span className="diff-tag">{DIFFICULTY_CONFIG[difficulty].tag}</span>
+                    </div>
+                    <div className="diff-buttons">
+                      {(['easy', 'medium', 'hard']).map((lvl) => (
+                        <button
+                          key={lvl}
+                          type="button"
+                          className={`diff-select-btn diff-${lvl} ${difficulty === lvl ? 'active' : ''}`}
+                          onClick={() => {
+                            playClick(600, 0.03);
+                            setDifficulty(lvl);
+                          }}
+                        >
+                          <span className="btn-diff-label">{DIFFICULTY_CONFIG[lvl].label}</span>
+                          <span className="btn-diff-sub">{DIFFICULTY_CONFIG[lvl].time}s</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                /* Leaderboard View on Start Screen */
+                <div className="leaderboard-view font-mono">
+                  <div className="leaderboard-header">
+                    <Medal size={12} className="text-amber" />
+                    <span>TOP OPERATOR CALLSIGNS</span>
+                  </div>
+                  <div className="leaderboard-table">
+                    {leaderboard.slice(0, 5).map((entry, idx) => (
+                      <div key={entry.id || idx} className={`leaderboard-row ${idx === 0 ? 'rank-gold' : ''}`}>
+                        <span className="lb-rank">#{idx + 1}</span>
+                        <span className="lb-name">{entry.name}</span>
+                        <span className="lb-diff">[{entry.diff}]</span>
+                        <span className="lb-bugs">{entry.bugs} BUGS</span>
+                        <span className="lb-score">{entry.score} PTS</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 
+              {/* Start Button Always Prominent */}
               <button
                 type="button"
                 onClick={startGame}
                 className="btn-start-game font-mono"
+                id="btn-start-game"
               >
                 <Play size={16} />
-                <span>START INCIDENT TRIAGE</span>
+                <span>START INCIDENT TRIAGE ({DIFFICULTY_CONFIG[difficulty].label} // {DIFFICULTY_CONFIG[difficulty].time}s)</span>
               </button>
             </div>
           </div>
@@ -446,7 +610,7 @@ export default function BugHunterGame({ onExit }) {
           </div>
         )}
 
-        {/* State 3: GAMEOVER POSTMORTEM */}
+        {/* State 3: GAMEOVER POSTMORTEM WITH NAME SUBMISSION */}
         {gameState === 'gameover' && (
           <div className="arena-overlay arena-gameover-screen">
             <div className="gameover-card bracket-container">
@@ -457,7 +621,7 @@ export default function BugHunterGame({ onExit }) {
 
               <div className="card-badge font-mono">
                 <AlertTriangle size={13} className="text-amber" />
-                <span>INCIDENT POSTMORTEM COMPLETE</span>
+                <span>INCIDENT POSTMORTEM // {DIFFICULTY_CONFIG[difficulty].label}</span>
               </div>
 
               <h3 className="gameover-title font-display">TRIAGE REPORT</h3>
@@ -489,6 +653,38 @@ export default function BugHunterGame({ onExit }) {
                   <span className="stat-label">FALSE POSITIVES CLICKED:</span>
                   <span className="stat-val text-red">{penalties}</span>
                 </div>
+              </div>
+
+              {/* Visitor Name High Score Submission Form */}
+              <div className="save-score-section font-mono">
+                {hasSubmittedScore ? (
+                  <div className="score-saved-toast">
+                    <CheckCircle2 size={14} className="text-green" />
+                    <span>CALLSIGN RECORDED TO LEADERBOARD!</span>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSaveScore} className="save-score-form">
+                    <div className="save-label-row">
+                      <User size={13} className="text-amber" />
+                      <span>ENTER CALLSIGN TO RECORD SCORE:</span>
+                    </div>
+                    <div className="save-input-group">
+                      <input
+                        type="text"
+                        value={playerName}
+                        onChange={(e) => setPlayerName(e.target.value.toUpperCase().slice(0, 14))}
+                        placeholder="YOUR CALLSIGN (e.g. NEO)"
+                        maxLength={14}
+                        className="player-name-input"
+                        required
+                        aria-label="Enter your callsign"
+                      />
+                      <button type="submit" className="btn-save-score">
+                        SAVE SCORE
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
 
               {/* Actions */}
