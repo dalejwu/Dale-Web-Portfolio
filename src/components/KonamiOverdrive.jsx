@@ -31,28 +31,44 @@ export default function KonamiOverdrive() {
   const [keyIndex, setKeyIndex] = useState(0);
 
   useEffect(() => {
+    let timeoutId = null;
+
     const handleKeyDown = (e) => {
-      if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+      if (['INPUT', 'TEXTAREA'].includes(e.target?.tagName)) return;
 
       const key = e.key.toLowerCase();
       const expectedKey = KONAMI_SEQUENCE[keyIndex].toLowerCase();
 
       if (key === expectedKey) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => setKeyIndex(0), 2000);
+
         const nextIndex = keyIndex + 1;
         if (nextIndex === KONAMI_SEQUENCE.length) {
+          clearTimeout(timeoutId);
           activateOverdrive();
           setKeyIndex(0);
         } else {
           setKeyIndex(nextIndex);
         }
       } else {
+        clearTimeout(timeoutId);
         setKeyIndex(0);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      clearTimeout(timeoutId);
+    };
   }, [keyIndex]);
+
+  useEffect(() => {
+    const handleTrigger = () => activateOverdrive();
+    window.addEventListener('trigger-overdrive', handleTrigger);
+    return () => window.removeEventListener('trigger-overdrive', handleTrigger);
+  }, []);
 
   const applyPaletteTokens = (paletteId) => {
     const root = document.documentElement;

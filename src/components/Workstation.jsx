@@ -90,6 +90,7 @@ export default function Workstation() {
         break;
       case 'game':
       case 'play':
+      case 'arcade':
       case 'bugs':
       case 'triage':
       case 'bughunter':
@@ -99,15 +100,13 @@ export default function Workstation() {
         });
         setWorkstationMode('game');
         break;
-      case 'arcade':
+      case 'overdrive':
       case 'konami':
-      case 'cheat':
         newLogs.push({
           type: 'res',
-          text: '⚡ INJECTING KONAMI SEQUENCE... [↑ ↑ ↓ ↓ ← → ← → B A] // OVERDRIVE ENGAGED.'
+          text: '⚡ KERNEL OVERDRIVE DETECTED // GPU ACCELERATION: 100% // BYPASS PROTOCOLS ENGAGED.'
         });
-        const cheatKeys = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-        cheatKeys.forEach((key, i) => setTimeout(() => window.dispatchEvent(new KeyboardEvent('keydown', { key })), i * 35));
+        window.dispatchEvent(new CustomEvent('trigger-overdrive'));
         break;
       case 'recruiter':
         newLogs.push({
@@ -118,7 +117,7 @@ export default function Workstation() {
       case 'hack':
         newLogs.push({
           type: 'res',
-          text: '⚡ ACCESSING MAINFRAME... [STATUS: 200 OK] // ROOT KEY BYPASS: "DALE_KERNEL_SEC" // TIP: Try typing the Konami Code on your keyboard (↑ ↑ ↓ ↓ ← → ← → B A) or run "game" to squash bugs!'
+          text: '⚡ ACCESSING MAINFRAME... [STATUS: 200 OK] // ROOT KEY BYPASS: "DALE_KERNEL_SEC" // SYSTEM RUNNING IN NOMINAL MODE.'
         });
         break;
       case 'coffee':
@@ -358,8 +357,8 @@ export default function Workstation() {
                     <button type="button" onClick={() => handleCommand('skills')} className="preset-btn">
                       skills
                     </button>
-                    <button type="button" onClick={() => handleCommand('game')} className="preset-btn preset-btn-game" title="Play Bug Squasher mini game">
-                      👾 game
+                    <button type="button" onClick={() => handleCommand('arcade')} className="preset-btn preset-btn-game" title="Play Bug Squasher mini-game">
+                      👾 arcade
                     </button>
                     <button type="button" onClick={() => handleCommand('recruiter')} className="preset-btn">
                       recruiter
@@ -369,9 +368,6 @@ export default function Workstation() {
                     </button>
                     <button type="button" onClick={() => handleCommand('hack')} className="preset-btn">
                       hack
-                    </button>
-                    <button type="button" onClick={() => handleCommand('arcade')} className="preset-btn" title="Cheat: triggers Overdrive mode">
-                      arcade
                     </button>
                     <button type="button" onClick={() => handleCommand('specs')} className="preset-btn">
                       specs
