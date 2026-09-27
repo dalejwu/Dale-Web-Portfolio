@@ -170,27 +170,27 @@
 /* Academic Institution Seal Stamp */
 .node-seal-stamp {
   position: absolute;
-  top: 1.25rem;
-  right: 1.5rem;
-  width: 60px;
-  height: 60px;
+  top: 1.5rem;
+  right: 1.75rem;
+  width: 86px;
+  height: 86px;
   border-radius: 50%;
-  padding: 4px;
-  background: rgba(16, 16, 20, 0.9);
-  border: 1px solid var(--border-medium);
+  padding: 6px;
+  background: rgba(12, 12, 16, 0.95);
+  border: 1.5px solid var(--border-medium);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.75);
   z-index: 2;
   transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .node-content-card:hover .node-seal-stamp {
-  transform: scale(1.06);
+  transform: scale(1.08);
   border-color: var(--border-bright);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.9);
 }
 
 .node-seal-img {
@@ -201,7 +201,7 @@
 }
 
 .node-has-logo {
-  padding-right: 4.5rem;
+  padding-right: 6.5rem;
 }
 
 /* Node Header */
@@ -386,15 +386,15 @@
   }
 
   .node-seal-stamp {
-    top: 1rem;
-    right: 1rem;
-    width: 48px;
-    height: 48px;
-    padding: 3px;
+    top: 1.15rem;
+    right: 1.15rem;
+    width: 66px;
+    height: 66px;
+    padding: 4px;
   }
 
   .node-has-logo {
-    padding-right: 3.5rem;
+    padding-right: 5rem;
   }
 }
 
@@ -423,12 +423,12 @@
   .node-seal-stamp {
     top: 0.85rem;
     right: 0.85rem;
-    width: 40px;
-    height: 40px;
-    padding: 2px;
+    width: 52px;
+    height: 52px;
+    padding: 3px;
   }
 
   .node-has-logo {
-    padding-right: 3rem;
+    padding-right: 4rem;
   }
 }
