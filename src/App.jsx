@@ -52,7 +52,7 @@ export default function App() {
         <div className="header-inner container">
           <a href="#" className="brand-logo" onClick={() => playClick(550, 0.03)}>
             <span className="logo-bracket">[</span>
-            <span className="logo-name">FLORENZ DALE</span>
+            <span className="logo-name">DALEJWU</span>
             <span className="logo-bracket">]</span>
             <span className="logo-sub">// PAÑA.OS</span>
           </a>
