@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Github, Linkedin, Send, CheckCircle2, Copy, Check, Terminal, Clock, Globe, ArrowUpRight, AlertTriangle, ExternalLink } from 'lucide-react';
+import { playClick, playChirp } from '../utils/sound';
 import './Contact.css';
 
 // Memoized LiveClock prevents root Contact re-rendering on 1-second intervals
@@ -48,6 +49,7 @@ export default function Contact() {
   const contactEmail = 'dalepana405@gmail.com';
 
   const copyEmailToClipboard = () => {
+    playChirp(840, 0.035);
     navigator.clipboard.writeText(contactEmail);
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
       try { navigator.vibrate(25); } catch (_) {}
@@ -153,7 +155,7 @@ export default function Contact() {
             INITIATE CONTACT
           </h2>
           <p className="contact-subtitle font-mono">
-            // OPEN TO FULL-TIME LEADERSHIP ROLES, ARCHITECTURE CONSULTING, AND TECHNICAL COLLABORATION
+            // DIRECT CONDUIT: NO ROBOCALLS, NO SPAM // STRICTLY HIGH-IMPACT ROLES &amp; SYSTEMS ARCHITECTURE
           </p>
         </div>
 

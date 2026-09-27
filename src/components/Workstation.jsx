@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Terminal, Cpu, Layers, HardDrive, Shield, CheckCircle2, ChevronRight, Activity, CornerDownLeft } from 'lucide-react';
+import { playClick, playChirp } from '../utils/sound';
 import './Workstation.css';
 
 export default function Workstation() {
   const [activeStackTab, setActiveStackTab] = useState('all');
   const [terminalInput, setTerminalInput] = useState('');
+  const [history, setHistory] = useState([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
   const [terminalLogs, setTerminalLogs] = useState([
     { type: 'sys', text: 'INIT_KERNEL: Florenz Dale OS v2.6.4 (x86_64-win32)' },
     { type: 'sys', text: 'WORKSPACE: Ready. Type "help" or click presets below.' }
@@ -56,13 +59,43 @@ export default function Workstation() {
     const raw = (cmdText || terminalInput).trim().toLowerCase();
     if (!raw) return;
 
+    playChirp(840, 0.04);
+    setHistory((prev) => [...prev, raw]);
+    setHistoryIndex(-1);
+
     const newLogs = [...terminalLogs, { type: 'user', text: `> ${raw}` }];
 
     switch (raw) {
       case 'help':
         newLogs.push({
           type: 'res',
-          text: 'Available commands: "skills", "stack", "specs", "academic", "philosophy", "clear"'
+          text: 'Available commands: "skills", "stack", "specs", "academic", "recruiter", "hack", "coffee", "sudo", "philosophy", "clear"'
+        });
+        break;
+      case 'recruiter':
+        newLogs.push({
+          type: 'res',
+          text: 'RECRUITER DISPATCH: Florenz Dale C. Paña | Full-Stack Software Engineer & Systems Architect | React, TypeScript, Node.js, PostgreSQL | Builds resilient distributed platforms with sub-50ms latency & 99.9% uptime | Email: dalepana405@gmail.com'
+        });
+        break;
+      case 'hack':
+      case 'play':
+        newLogs.push({
+          type: 'res',
+          text: '⚡ ACCESSING MAINFRAME... [STATUS: 200 OK] // ROOT KEY BYPASS: "DALE_KERNEL_SEC" // TIP: Try typing the Konami Code on your keyboard (↑ ↑ ↓ ↓ ← → ← → B A)'
+        });
+        break;
+      case 'coffee':
+        newLogs.push({
+          type: 'res',
+          text: '☕ COFFEE PIPELINE: 418 I\'m a teapot (and a systems architect). Current caffeine capacity: 96% optimal.'
+        });
+        break;
+      case 'sudo':
+      case 'sudo su':
+        newLogs.push({
+          type: 'err',
+          text: 'dale is not in the sudoers file. This incident will be logged in the incident chronicle.'
         });
         break;
       case 'academic':
@@ -109,6 +142,29 @@ export default function Workstation() {
 
     setTerminalLogs(newLogs);
     setTerminalInput('');
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (history.length === 0) return;
+      const nextIdx = historyIndex === -1 ? history.length - 1 : Math.max(0, historyIndex - 1);
+      setHistoryIndex(nextIdx);
+      setTerminalInput(history[nextIdx] || '');
+      playClick(700, 0.02);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (historyIndex === -1) return;
+      const nextIdx = historyIndex + 1;
+      if (nextIdx >= history.length) {
+        setHistoryIndex(-1);
+        setTerminalInput('');
+      } else {
+        setHistoryIndex(nextIdx);
+        setTerminalInput(history[nextIdx] || '');
+      }
+      playClick(600, 0.02);
+    }
   };
 
   return (
@@ -180,8 +236,12 @@ export default function Workstation() {
                   <input
                     type="text"
                     value={terminalInput}
-                    onChange={(e) => setTerminalInput(e.target.value)}
-                    placeholder="Type command (e.g. skills, specs, help)..."
+                    onChange={(e) => {
+                      setTerminalInput(e.target.value);
+                      playClick(520 + Math.random() * 160, 0.015);
+                    }}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Type command (e.g. skills, recruiter, hack, help)..."
                     className="terminal-input"
                     aria-label="Terminal command input"
                   />
@@ -196,17 +256,20 @@ export default function Workstation() {
                   <button type="button" onClick={() => handleCommand('skills')} className="preset-btn">
                     skills
                   </button>
+                  <button type="button" onClick={() => handleCommand('recruiter')} className="preset-btn">
+                    recruiter
+                  </button>
                   <button type="button" onClick={() => handleCommand('stack')} className="preset-btn">
                     stack
+                  </button>
+                  <button type="button" onClick={() => handleCommand('hack')} className="preset-btn">
+                    hack
                   </button>
                   <button type="button" onClick={() => handleCommand('specs')} className="preset-btn">
                     specs
                   </button>
-                  <button type="button" onClick={() => handleCommand('academic')} className="preset-btn">
-                    academic
-                  </button>
-                  <button type="button" onClick={() => handleCommand('philosophy')} className="preset-btn">
-                    philosophy
+                  <button type="button" onClick={() => handleCommand('coffee')} className="preset-btn">
+                    coffee
                   </button>
                   <button type="button" onClick={() => handleCommand('clear')} className="preset-btn">
                     clear

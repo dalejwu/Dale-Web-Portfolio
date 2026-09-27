@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import { ArrowUpRight, Github, ExternalLink, X, CheckCircle2, Layers, Cpu, Database, Terminal, Shield, Sparkles } from 'lucide-react';
 import sereneDentalImg from '../assets/serene-dental.webp';
 import SchemaGraph from './SchemaGraph';
+import TiltCard from './TiltCard';
+import { playClick, playChirp } from '../utils/sound';
 import './Projects.css';
 
 export default function Projects() {
@@ -10,6 +12,7 @@ export default function Projects() {
   const [modalTab, setModalTab] = useState('spec');
 
   const openModal = (project, tab = 'spec') => {
+    playChirp(720, 0.035);
     setActiveModalProject(project);
     setModalTab(tab);
   };
@@ -93,21 +96,21 @@ export default function Projects() {
         {/* Section Title Banner */}
         <div className="projects-title-banner">
           <h2 className="projects-display-title font-display">
-            DEPLOYED ARCHITECTURE &amp; SELECTED WORKS
+            STUFF I'VE SHIPPED BEFORE 03:00 AM
           </h2>
           <p className="projects-subtitle font-mono">
-            // PRODUCTION CASE STUDY: HEALTHCARE APPOINTMENT DISPATCH &amp; HIGH-PERFORMANCE WEB ARCHITECTURE
+            // PRODUCTION ARCHITECTURE: HIGH-PERFORMANCE WEB APPS, CLINICAL WORKFLOWS &amp; INTERACTIVE SCHEMAS
           </p>
         </div>
 
         {/* Projects Grid */}
         <div className="projects-grid single-project-grid">
           {projects.map((project) => (
-            <div
-              key={project.id}
-              className="project-card glass-panel bracket-container featured-card"
-              onClick={() => openModal(project, 'spec')}
-            >
+            <TiltCard key={project.id} maxTilt={5} className="project-tilt-wrapper">
+              <div
+                className="project-card glass-panel bracket-container featured-card"
+                onClick={() => openModal(project, 'spec')}
+              >
               <div className="corner-bracket tl" />
               <div className="corner-bracket tr" />
               <div className="corner-bracket bl" />
@@ -211,6 +214,7 @@ export default function Projects() {
                 </div>
               </div>
             </div>
+            </TiltCard>
           ))}
         </div>
       </div>
@@ -219,7 +223,10 @@ export default function Projects() {
       {activeModalProject && createPortal(
         <div
           className="project-modal-backdrop"
-          onClick={() => setActiveModalProject(null)}
+          onClick={() => {
+            playClick(440, 0.02);
+            setActiveModalProject(null);
+          }}
           role="dialog"
           aria-modal="true"
           aria-labelledby="modal-title"
@@ -245,14 +252,20 @@ export default function Projects() {
                 <button
                   type="button"
                   className={`mode-tab-btn ${modalTab === 'spec' ? 'active' : ''}`}
-                  onClick={() => setModalTab('spec')}
+                  onClick={() => {
+                    playClick(540, 0.025);
+                    setModalTab('spec');
+                  }}
                 >
                   SYSTEM SPECIFICATION
                 </button>
                 <button
                   type="button"
                   className={`mode-tab-btn ${modalTab === 'schema' ? 'active' : ''}`}
-                  onClick={() => setModalTab('schema')}
+                  onClick={() => {
+                    playClick(580, 0.025);
+                    setModalTab('schema');
+                  }}
                 >
                   <Database size={12} className="text-green" />
                   <span>INTERACTIVE ER SCHEMA</span>
@@ -263,7 +276,10 @@ export default function Projects() {
               <button
                 type="button"
                 className="modal-close-btn"
-                onClick={() => setActiveModalProject(null)}
+                onClick={() => {
+                  playClick(440, 0.02);
+                  setActiveModalProject(null);
+                }}
                 aria-label="Close modal"
               >
                 <X size={18} />

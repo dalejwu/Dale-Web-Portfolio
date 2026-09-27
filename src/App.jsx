@@ -1,14 +1,28 @@
-import React, { useState } from 'react';
-import { Terminal, Code2, Cpu, Globe, ArrowUpRight, Github, Linkedin, Mail, ExternalLink } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Terminal, Code2, Cpu, Globe, ArrowUpRight, Github, Linkedin, Mail, ExternalLink, Volume2, VolumeX } from 'lucide-react';
 import Workstation from './components/Workstation';
 import Timeline from './components/Timeline';
 import Projects from './components/Projects';
 import Contact from './components/Contact';
 import BinaryRain from './components/BinaryRain';
+import ClickSpark from './components/ClickSpark';
+import KonamiOverdrive from './components/KonamiOverdrive';
+import { initAudio, isAudioEnabled, toggleAudio, playClick } from './utils/sound';
 import './App.css';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('hero');
+  const [sfxEnabled, setSfxEnabled] = useState(false);
+
+  useEffect(() => {
+    initAudio();
+    setSfxEnabled(isAudioEnabled());
+  }, []);
+
+  const handleAudioToggle = () => {
+    const nextState = toggleAudio();
+    setSfxEnabled(nextState);
+  };
 
   return (
     <div className="portfolio-app">
@@ -18,10 +32,16 @@ export default function App() {
       {/* Background Halftone Overlay */}
       <div className="halftone-layer halftone-bg" />
 
+      {/* Interactive Micro Click Sparks */}
+      <ClickSpark />
+
+      {/* Konami Code Secret Cyberpunk Overdrive Protocol */}
+      <KonamiOverdrive />
+
       {/* Top Cyber Navigation */}
       <header className="cyber-header glass-panel">
         <div className="header-inner container">
-          <a href="#" className="brand-logo">
+          <a href="#" className="brand-logo" onClick={() => playClick(550, 0.03)}>
             <span className="logo-bracket">[</span>
             <span className="logo-name">FLORENZ DALE</span>
             <span className="logo-bracket">]</span>
@@ -34,15 +54,28 @@ export default function App() {
           </div>
 
           <nav className="desktop-nav">
-            <a href="#workstation" className="nav-item"><span>01</span> WORKSTATION</a>
-            <a href="#timeline" className="nav-item"><span>02</span> TIMELINE</a>
-            <a href="#projects" className="nav-item"><span>03</span> PROJECTS</a>
-            <a href="#contact" className="nav-item"><span>04</span> CONTACT</a>
+            <a href="#workstation" className="nav-item" onClick={() => playClick(480, 0.025)}><span>01</span> WORKSTATION</a>
+            <a href="#timeline" className="nav-item" onClick={() => playClick(480, 0.025)}><span>02</span> TIMELINE</a>
+            <a href="#projects" className="nav-item" onClick={() => playClick(480, 0.025)}><span>03</span> PROJECTS</a>
+            <a href="#contact" className="nav-item" onClick={() => playClick(480, 0.025)}><span>04</span> CONTACT</a>
           </nav>
 
-          <a href="#contact" className="btn-cyber-outline header-cta">
-            INITIATE CONTACT
-          </a>
+          <div className="header-actions-group">
+            <button
+              type="button"
+              onClick={handleAudioToggle}
+              className={`audio-toggle-btn font-mono ${sfxEnabled ? 'active' : ''}`}
+              title={sfxEnabled ? "Audio SFX: ON (Click to Mute)" : "Audio SFX: MUTED (Click to Enable)"}
+              aria-label="Toggle sound effects"
+            >
+              {sfxEnabled ? <Volume2 size={13} /> : <VolumeX size={13} />}
+              <span>{sfxEnabled ? 'SFX: ON' : 'SFX: OFF'}</span>
+            </button>
+
+            <a href="#contact" className="btn-cyber-outline header-cta" onClick={() => playClick(540, 0.03)}>
+              INITIATE CONTACT
+            </a>
+          </div>
         </div>
       </header>
 

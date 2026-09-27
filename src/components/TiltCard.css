@@ -1,0 +1,26 @@
+.tilt-card-wrapper {
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.tilt-card-glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 5;
+  mix-blend-mode: overlay;
+}
+
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .tilt-card-wrapper {
+    transform: none !important;
+    transition: none !important;
+  }
+  .tilt-card-glare {
+    display: none !important;
+  }
+}

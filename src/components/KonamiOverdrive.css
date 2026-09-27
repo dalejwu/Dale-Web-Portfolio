@@ -1,0 +1,142 @@
+/* Konami Overdrive Mode Styling */
+
+.overdrive-toast {
+  position: fixed;
+  top: 84px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  max-width: 680px;
+  width: calc(100% - 2rem);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background: rgba(15, 8, 25, 0.92);
+  border: 1px solid #ff007f;
+  box-shadow: 0 8px 32px rgba(255, 0, 127, 0.3), inset 0 0 16px rgba(0, 255, 204, 0.15);
+  animation: slide-down-toast 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slide-down-toast {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.overdrive-toast-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.overdrive-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.overdrive-icon {
+  color: #00ffcc;
+  flex-shrink: 0;
+}
+
+.overdrive-heading {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #ff007f;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 8px rgba(255, 0, 127, 0.6);
+}
+
+.overdrive-desc {
+  font-size: 0.75rem;
+  color: #d1d5db;
+  line-height: 1.4;
+}
+
+.overdrive-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.overdrive-btn {
+  font-size: 0.6875rem;
+  padding: 0.4rem 0.75rem;
+  background: #ff007f;
+  color: #ffffff;
+  border-color: #ff007f;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
+}
+
+.overdrive-btn:hover {
+  background: #ffffff;
+  color: #ff007f;
+}
+
+.overdrive-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  transition: color 0.15s ease;
+}
+
+.overdrive-close-btn:hover {
+  color: #ffffff;
+}
+
+.overdrive-floating-pill {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 900;
+  background: rgba(255, 0, 127, 0.25);
+  border: 1px solid #ff007f;
+  color: #ffffff;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.6875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  box-shadow: 0 0 16px rgba(255, 0, 127, 0.4);
+}
+
+/* Overdrive Mode Global CSS Overrides */
+body.overdrive-mode {
+  --accent-green: #00ffcc;
+  --accent-cyan: #ff007f;
+  --accent-amber: #ffe600;
+  --border-corner: rgba(255, 0, 127, 0.6);
+}
+
+body.overdrive-mode .binary-rain-container {
+  opacity: 0.45;
+  filter: hue-rotate(280deg);
+}
+
+@media (max-width: 640px) {
+  .overdrive-toast {
+    flex-direction: column;
+    align-items: flex-start;
+    top: 76px;
+  }
+  .overdrive-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

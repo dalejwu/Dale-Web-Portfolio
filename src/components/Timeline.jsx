@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Briefcase, GraduationCap, ChevronDown, ChevronUp, Terminal, CheckCircle2, Award, Zap } from 'lucide-react';
+import { playClick } from '../utils/sound';
 import './Timeline.css';
 
 export default function Timeline() {
@@ -11,6 +12,7 @@ export default function Timeline() {
   });
 
   const toggleNode = (id) => {
+    playClick(480, 0.025);
     setExpandedNodes(prev => ({
       ...prev,
       [id]: !prev[id]
@@ -103,28 +105,37 @@ export default function Timeline() {
             <div className="corner-bracket bl" />
             <div className="corner-bracket br" />
             <span className="badge-bullet">// 02</span>
-            <span>TRAJECTORY &amp; MILESTONES</span>
+            <span>BATTLE SCARS &amp; MILESTONES</span>
           </div>
 
           <div className="timeline-filter-tabs font-mono">
             <button
               type="button"
               className={`timeline-filter-btn ${filter === 'all' ? 'active' : ''}`}
-              onClick={() => setFilter('all')}
+              onClick={() => {
+                playClick(520, 0.03);
+                setFilter('all');
+              }}
             >
               ALL NODES
             </button>
             <button
               type="button"
               className={`timeline-filter-btn ${filter === 'industry' ? 'active' : ''}`}
-              onClick={() => setFilter('industry')}
+              onClick={() => {
+                playClick(520, 0.03);
+                setFilter('industry');
+              }}
             >
               ENGINEERING CAREER
             </button>
             <button
               type="button"
               className={`timeline-filter-btn ${filter === 'academic' ? 'active' : ''}`}
-              onClick={() => setFilter('academic')}
+              onClick={() => {
+                playClick(520, 0.03);
+                setFilter('academic');
+              }}
             >
               ACADEMIC FOUNDATION
             </button>
@@ -134,10 +145,10 @@ export default function Timeline() {
         {/* Section Title Banner */}
         <div className="timeline-title-banner">
           <h2 className="timeline-display-title font-display">
-            CAREER &amp; INSTITUTIONAL MILESTONES
+            THINGS I'VE BROKEN &amp; SUCCESSFULLY FIXED
           </h2>
           <p className="timeline-subtitle font-mono">
-            // DOCUMENTING TECHNICAL LEADERSHIP, PRODUCTION SCALE, AND ACADEMIC ROOTS
+            // BATTLE-TESTED CHRONOLOGY: PRODUCTION INCIDENTS, ACADEMIC WINS &amp; SCALED ROLLOUTS
           </p>
         </div>
 
