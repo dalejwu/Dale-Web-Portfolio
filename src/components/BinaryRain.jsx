@@ -51,43 +51,96 @@ export default function BinaryRain() {
     const render = (currentTime) => {
       animationFrameId = requestAnimationFrame(render);
 
-      // Throttle to target FPS
+      // Throttle to target FPS (runs at full speed in overdrive)
+      const isOverdrive = document.body.classList.contains('overdrive-mode');
+      const activeFpsInterval = isOverdrive ? 1000 / 48 : fpsInterval;
+
       const elapsed = currentTime - lastTime;
-      if (elapsed < fpsInterval) return;
-      lastTime = currentTime - (elapsed % fpsInterval);
+      if (elapsed < activeFpsInterval) return;
+      lastTime = currentTime - (elapsed % activeFpsInterval);
 
       // Trailing fade wash
-      ctx.fillStyle = 'rgba(5, 5, 8, 0.08)';
+      ctx.fillStyle = isOverdrive ? 'rgba(8, 4, 14, 0.08)' : 'rgba(5, 5, 8, 0.08)';
       ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+      const palette = document.body.dataset.overdrivePalette || 'cyberpunk';
+      const cyberGlyphs = ['0', '1', 'Ξ', 'Ψ', 'Ω', '7', 'X', 'Ø', '⚡', '0', '1'];
 
       for (let i = 0; i < drops.length; i++) {
         const x = i * columnSpacing;
         const y = drops[i] * fontSize;
 
         if (drops[i] >= 0 && y <= window.innerHeight + fontSize) {
-          // Pure binary characters matching user's reference
-          const text = Math.random() > 0.5 ? '1' : '0';
+          const text = isOverdrive
+            ? cyberGlyphs[Math.floor(Math.random() * cyberGlyphs.length)]
+            : (Math.random() > 0.5 ? '1' : '0');
 
-          // Randomized brightness for leading vs trailing code
-          const isLead = Math.random() > 0.85;
-          if (isLead) {
-            ctx.fillStyle = 'rgba(187, 247, 208, 0.95)'; // Bright phosphor lead (#bbf7d0)
-            ctx.shadowColor = 'rgba(74, 222, 128, 0.7)';
-            ctx.shadowBlur = 6;
+          const isLead = Math.random() > (isOverdrive ? 0.78 : 0.85);
+
+          if (isOverdrive) {
+            if (palette === 'cyberpunk') {
+              if (isLead) {
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = '#ff007f';
+                ctx.shadowBlur = 8;
+              } else {
+                ctx.fillStyle = Math.random() > 0.4 ? 'rgba(0, 255, 204, 0.85)' : 'rgba(255, 0, 127, 0.75)';
+                ctx.shadowBlur = 2;
+                ctx.shadowColor = '#00ffcc';
+              }
+            } else if (palette === 'matrix') {
+              if (isLead) {
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = '#00ff66';
+                ctx.shadowBlur = 10;
+              } else {
+                ctx.fillStyle = 'rgba(0, 255, 102, 0.85)';
+                ctx.shadowBlur = 3;
+                ctx.shadowColor = '#00ff66';
+              }
+            } else if (palette === 'amber') {
+              if (isLead) {
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = '#fbbf24';
+                ctx.shadowBlur = 8;
+              } else {
+                ctx.fillStyle = 'rgba(245, 158, 11, 0.85)';
+                ctx.shadowBlur = 2;
+                ctx.shadowColor = '#f59e0b';
+              }
+            } else {
+              // crimson
+              if (isLead) {
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = '#ef4444';
+                ctx.shadowBlur = 8;
+              } else {
+                ctx.fillStyle = 'rgba(239, 68, 68, 0.85)';
+                ctx.shadowBlur = 2;
+                ctx.shadowColor = '#b91c1c';
+              }
+            }
           } else {
-            ctx.fillStyle = 'rgba(74, 222, 128, 0.55)'; // Subtle glowing stream (#4ade80)
-            ctx.shadowBlur = 0;
+            // Standard subtle cyber green
+            if (isLead) {
+              ctx.fillStyle = 'rgba(187, 247, 208, 0.95)';
+              ctx.shadowColor = 'rgba(74, 222, 128, 0.7)';
+              ctx.shadowBlur = 6;
+            } else {
+              ctx.fillStyle = 'rgba(74, 222, 128, 0.55)';
+              ctx.shadowBlur = 0;
+            }
           }
 
           ctx.fillText(text, x, y);
         }
 
-        // Reset column when it reaches the bottom with organic offset
-        if (y > window.innerHeight && Math.random() > 0.975) {
+        // Reset column when it reaches the bottom
+        if (y > window.innerHeight && Math.random() > (isOverdrive ? 0.95 : 0.975)) {
           drops[i] = 0;
         }
 
-        drops[i]++;
+        drops[i] += isOverdrive ? 2 : 1;
       }
     };
 

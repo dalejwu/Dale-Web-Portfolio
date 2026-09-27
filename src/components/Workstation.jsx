@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Terminal, Cpu, Layers, HardDrive, Shield, CheckCircle2, ChevronRight, Activity, CornerDownLeft } from 'lucide-react';
 import { playClick, playChirp } from '../utils/sound';
 import './Workstation.css';
@@ -12,6 +12,20 @@ export default function Workstation() {
     { type: 'sys', text: 'INIT_KERNEL: Florenz Dale OS v2.6.4 (x86_64-win32)' },
     { type: 'sys', text: 'WORKSPACE: Ready. Type "help" or click presets below.' }
   ]);
+
+  useEffect(() => {
+    const handleOverdrive = () => {
+      setTerminalLogs((prev) => [
+        ...prev,
+        {
+          type: 'res',
+          text: '⚡ KERNEL OVERDRIVE DETECTED // GPU ACCELERATION: 100% // BYPASS PROTOCOLS ENGAGED. 144Hz CLOCKED.'
+        }
+      ]);
+    };
+    window.addEventListener('overdrive-activated', handleOverdrive);
+    return () => window.removeEventListener('overdrive-activated', handleOverdrive);
+  }, []);
 
   const stackCategories = {
     all: [

@@ -1,28 +1,55 @@
-/* Konami Overdrive Mode Styling */
+/* Enhanced Konami Overdrive Mode Styling */
 
+/* Shockwave Flash Effect */
+.overdrive-shockwave {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 0, 127, 0.5) 0%, rgba(0, 255, 204, 0.4) 40%, rgba(255, 255, 255, 0.8) 70%, transparent 100%);
+  animation: overdrive-shockwave-pulse 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes overdrive-shockwave-pulse {
+  0% {
+    opacity: 1;
+    transform: scale(0.6);
+  }
+  50% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
+/* Overdrive Toast Banner */
 .overdrive-toast {
   position: fixed;
   top: 84px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  max-width: 680px;
+  max-width: 780px;
   width: calc(100% - 2rem);
-  padding: 1rem 1.25rem;
+  padding: 1.15rem 1.4rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  background: rgba(15, 8, 25, 0.92);
-  border: 1px solid #ff007f;
-  box-shadow: 0 8px 32px rgba(255, 0, 127, 0.3), inset 0 0 16px rgba(0, 255, 204, 0.15);
+  background: rgba(12, 6, 20, 0.94);
+  border: 1px solid var(--accent-cyan);
+  box-shadow: 0 10px 40px rgba(255, 0, 127, 0.35), inset 0 0 24px rgba(0, 255, 204, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   animation: slide-down-toast 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes slide-down-toast {
   from {
     opacity: 0;
-    transform: translate(-50%, -20px);
+    transform: translate(-50%, -24px);
   }
   to {
     opacity: 1;
@@ -33,32 +60,90 @@
 .overdrive-toast-content {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.45rem;
+  flex: 1;
 }
 
 .overdrive-title-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
+  flex-wrap: wrap;
 }
 
 .overdrive-icon {
-  color: #00ffcc;
+  color: var(--accent-green);
   flex-shrink: 0;
 }
 
 .overdrive-heading {
   font-size: 0.8125rem;
   font-weight: 700;
-  color: #ff007f;
-  letter-spacing: 0.05em;
-  text-shadow: 0 0 8px rgba(255, 0, 127, 0.6);
+  color: var(--accent-cyan);
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 10px var(--accent-cyan);
+}
+
+.overdrive-fps-badge {
+  font-size: 0.625rem;
+  padding: 0.15rem 0.5rem;
+  background: rgba(0, 255, 204, 0.15);
+  border: 1px solid var(--accent-green);
+  color: var(--accent-green);
+  letter-spacing: 0.08em;
+  font-weight: 700;
 }
 
 .overdrive-desc {
   font-size: 0.75rem;
   color: #d1d5db;
   line-height: 1.4;
+}
+
+/* Palette Selector Chips */
+.overdrive-palette-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.palette-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.65rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+.palette-chip-btn .chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--chip-color);
+  box-shadow: 0 0 6px var(--chip-color);
+}
+
+.palette-chip-btn:hover {
+  color: #ffffff;
+  border-color: var(--chip-color);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.palette-chip-btn.active {
+  color: #ffffff;
+  border-color: var(--chip-color);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
 }
 
 .overdrive-actions {
@@ -70,17 +155,18 @@
 
 .overdrive-btn {
   font-size: 0.6875rem;
-  padding: 0.4rem 0.75rem;
-  background: #ff007f;
+  padding: 0.5rem 0.9rem;
+  background: var(--accent-cyan);
   color: #ffffff;
-  border-color: #ff007f;
+  border-color: var(--accent-cyan);
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
+  font-weight: 700;
+  box-shadow: 0 0 14px var(--accent-cyan);
 }
 
 .overdrive-btn:hover {
   background: #ffffff;
-  color: #ff007f;
+  color: #000000;
 }
 
 .overdrive-close-btn {
@@ -91,7 +177,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.25rem;
+  padding: 0.35rem;
   transition: color 0.15s ease;
 }
 
@@ -99,41 +185,112 @@
   color: #ffffff;
 }
 
-.overdrive-floating-pill {
+/* Persistent Floating HUD Widget */
+.overdrive-persistent-hud {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 900;
-  background: rgba(255, 0, 127, 0.25);
-  border: 1px solid #ff007f;
-  color: #ffffff;
-  padding: 0.4rem 0.85rem;
-  font-size: 0.6875rem;
+  z-index: 1000;
+  padding: 0.75rem 1rem;
+  background: rgba(10, 5, 18, 0.92);
+  border: 1px solid var(--accent-green);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 18px var(--accent-green-glow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  animation: hud-fade-in 0.3s ease-out;
+}
+
+@keyframes hud-fade-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hud-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.hud-title-group {
   display: flex;
   align-items: center;
   gap: 0.4rem;
+}
+
+.hud-icon {
+  color: var(--accent-green);
+}
+
+.hud-title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--accent-green);
+  letter-spacing: 0.06em;
+}
+
+.hud-restore-btn {
+  font-size: 0.625rem;
+  padding: 0.2rem 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
   cursor: pointer;
-  box-shadow: 0 0 16px rgba(255, 0, 127, 0.4);
+  transition: all 0.15s ease;
 }
 
-/* Overdrive Mode Global CSS Overrides */
-body.overdrive-mode {
-  --accent-green: #00ffcc;
-  --accent-cyan: #ff007f;
-  --accent-amber: #ffe600;
-  --border-corner: rgba(255, 0, 127, 0.6);
+.hud-restore-btn:hover {
+  color: #ffffff;
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
 }
 
+.hud-palettes-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.hud-palette-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.hud-palette-dot:hover {
+  transform: scale(1.25);
+}
+
+.hud-palette-dot.active {
+  border-color: #ffffff;
+  transform: scale(1.3);
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* Global Overdrive State Adjustments */
 body.overdrive-mode .binary-rain-container {
-  opacity: 0.45;
-  filter: hue-rotate(280deg);
+  opacity: 0.5;
+}
+
+body.overdrive-mode .corner-bracket {
+  border-color: var(--border-corner) !important;
+  filter: drop-shadow(0 0 3px var(--accent-green));
+}
+
+body.overdrive-mode .status-dot {
+  background-color: var(--accent-green) !important;
+  box-shadow: 0 0 12px var(--accent-green) !important;
 }
 
 @media (max-width: 640px) {
   .overdrive-toast {
     flex-direction: column;
     align-items: flex-start;
-    top: 76px;
+    top: 72px;
   }
   .overdrive-actions {
     width: 100%;

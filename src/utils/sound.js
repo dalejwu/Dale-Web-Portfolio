@@ -104,7 +104,7 @@ export function playChirp(freq = 880, vol = 0.04) {
 }
 
 /**
- * Konami Code Overdrive power-up sequence
+ * Konami Code Overdrive power-up sequence with arpeggiated run & sub-bass pulse
  */
 export function playOverdriveSound() {
   if (isMuted) return;
@@ -112,21 +112,60 @@ export function playOverdriveSound() {
   if (!ctx) return;
 
   try {
-    const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50];
+    // 1. Sub-bass resonant drop
+    const bassOsc = ctx.createOscillator();
+    const bassGain = ctx.createGain();
+    bassOsc.type = 'sawtooth';
+    bassOsc.frequency.setValueAtTime(110, ctx.currentTime);
+    bassOsc.frequency.exponentialRampToValueAtTime(35, ctx.currentTime + 0.6);
+    bassGain.gain.setValueAtTime(0.06, ctx.currentTime);
+    bassGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.6);
+    bassOsc.connect(bassGain);
+    bassGain.connect(ctx.destination);
+    bassOsc.start();
+    bassOsc.stop(ctx.currentTime + 0.65);
+
+    // 2. High-speed cyber victory arpeggio (C major 9 chord)
+    const notes = [261.63, 329.63, 392.00, 493.88, 523.25, 659.25, 783.99, 987.77, 1046.50, 1318.51];
     notes.forEach((freq, idx) => {
       setTimeout(() => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'square';
         osc.frequency.setValueAtTime(freq, ctx.currentTime);
-        gain.gain.setValueAtTime(0.04, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.035, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.16);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start();
-        osc.stop(ctx.currentTime + 0.13);
-      }, idx * 60);
+        osc.stop(ctx.currentTime + 0.18);
+      }, idx * 45);
     });
+  } catch {
+    // Ignore audio errors
+  }
+}
+
+/**
+ * Palette switch sound
+ */
+export function playPaletteSound() {
+  if (isMuted) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  try {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(520, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1040, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.04, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.09);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.1);
   } catch {
     // Ignore audio errors
   }
