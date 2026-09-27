@@ -4,6 +4,7 @@ import Workstation from './components/Workstation';
 import Timeline from './components/Timeline';
 import Projects from './components/Projects';
 import Contact from './components/Contact';
+import BinaryRain from './components/BinaryRain';
 import './App.css';
 
 export default function App() {
@@ -11,6 +12,9 @@ export default function App() {
 
   return (
     <div className="portfolio-app">
+      {/* Subtle Binary Code Rain Canvas */}
+      <BinaryRain />
+
       {/* Background Halftone Overlay */}
       <div className="halftone-layer halftone-bg" />
 
