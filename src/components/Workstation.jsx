@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Terminal, Cpu, Layers, HardDrive, Shield, CheckCircle2, ChevronRight, Activity, CornerDownLeft } from 'lucide-react';
+import { Terminal, Cpu, Layers, HardDrive, Shield, CheckCircle2, ChevronRight, Activity, CornerDownLeft, Gamepad2 } from 'lucide-react';
+import BugHunterGame from './BugHunterGame';
 import { playClick, playChirp } from '../utils/sound';
 import './Workstation.css';
 
@@ -8,9 +9,10 @@ export default function Workstation() {
   const [terminalInput, setTerminalInput] = useState('');
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [workstationMode, setWorkstationMode] = useState('terminal'); // 'terminal' | 'game'
   const [terminalLogs, setTerminalLogs] = useState([
     { type: 'sys', text: 'INIT_KERNEL: Florenz Dale OS v2.6.4 (x86_64-win32)' },
-    { type: 'sys', text: 'WORKSPACE: Ready. Type "help" or click presets. (Easter Egg: ↑ ↑ ↓ ↓ ← → ← → B A)' }
+    { type: 'sys', text: 'WORKSPACE: Ready. Type "help", "game", or click presets. (Easter Egg: ↑ ↑ ↓ ↓ ← → ← → B A)' }
   ]);
 
   useEffect(() => {
@@ -83,8 +85,19 @@ export default function Workstation() {
       case 'help':
         newLogs.push({
           type: 'res',
-          text: 'Available commands: "skills", "stack", "specs", "academic", "recruiter", "hack", "arcade", "coffee", "sudo", "philosophy", "clear". Classified: Arcade sequence [↑ ↑ ↓ ↓ ← → ← → B A].'
+          text: 'Available commands: "game", "skills", "stack", "specs", "academic", "recruiter", "hack", "arcade", "coffee", "sudo", "philosophy", "clear". Classified: Arcade sequence [↑ ↑ ↓ ↓ ← → ← → B A].'
         });
+        break;
+      case 'game':
+      case 'play':
+      case 'bugs':
+      case 'triage':
+      case 'bughunter':
+        newLogs.push({
+          type: 'res',
+          text: '👾 ENGAGING BUG TRIAGE ARENA // Target: squash production bugs! Beware of stray checkmarks and grab coffee for extra time.'
+        });
+        setWorkstationMode('game');
         break;
       case 'arcade':
       case 'konami':
@@ -103,10 +116,9 @@ export default function Workstation() {
         });
         break;
       case 'hack':
-      case 'play':
         newLogs.push({
           type: 'res',
-          text: '⚡ ACCESSING MAINFRAME... [STATUS: 200 OK] // ROOT KEY BYPASS: "DALE_KERNEL_SEC" // TIP: Try typing the Konami Code on your keyboard (↑ ↑ ↓ ↓ ← → ← → B A)'
+          text: '⚡ ACCESSING MAINFRAME... [STATUS: 200 OK] // ROOT KEY BYPASS: "DALE_KERNEL_SEC" // TIP: Try typing the Konami Code on your keyboard (↑ ↑ ↓ ↓ ← → ← → B A) or run "game" to squash bugs!'
         });
         break;
       case 'coffee':
@@ -204,10 +216,28 @@ export default function Workstation() {
             <span className="badge-bullet">// 01</span>
             <span>DEVELOPER WORKSTATION</span>
           </div>
-          <span className="status-indicator">
-            <span className="status-dot"></span>
-            <span>OS TELEMETRY ACTIVE</span>
-          </span>
+
+          <div className="workstation-heading-right">
+            <button
+              type="button"
+              onClick={() => {
+                playClick(600, 0.03);
+                setWorkstationMode((m) => (m === 'terminal' ? 'game' : 'terminal'));
+              }}
+              className={`workstation-game-pill font-mono ${workstationMode === 'game' ? 'active' : ''}`}
+              title="Toggle Bug Squasher mini game"
+              aria-label="Toggle Bug Squasher mini game"
+            >
+              <Gamepad2 size={13} className="pill-game-icon" />
+              <span>{workstationMode === 'game' ? 'VIEW TERMINAL' : 'MINI-GAME: BUG SQUASHER'}</span>
+              <span className="pill-pulse-dot" />
+            </button>
+
+            <span className="status-indicator">
+              <span className="status-dot"></span>
+              <span>OS TELEMETRY ACTIVE</span>
+            </span>
+          </div>
         </div>
 
         {/* Workstation Grid Layout */}
@@ -224,85 +254,126 @@ export default function Workstation() {
               {/* OS Window Top Titlebar */}
               <div className="os-titlebar font-mono">
                 <div className="os-titlebar-left">
-                  <Terminal size={14} className="os-icon" />
-                  <span className="os-title-text">florenzdale@workstation: ~/kernel-v2.6</span>
+                  <div className="os-tabs">
+                    <button
+                      type="button"
+                      className={`os-tab ${workstationMode === 'terminal' ? 'active' : ''}`}
+                      onClick={() => {
+                        playClick(600, 0.03);
+                        setWorkstationMode('terminal');
+                      }}
+                      aria-label="Switch to Terminal"
+                    >
+                      <Terminal size={13} className="os-tab-icon" />
+                      <span>TERMINAL</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={`os-tab os-tab-game ${workstationMode === 'game' ? 'active' : ''}`}
+                      onClick={() => {
+                        playClick(600, 0.03);
+                        setWorkstationMode('game');
+                      }}
+                      aria-label="Switch to Bug Squasher Mini-Game"
+                    >
+                      <Gamepad2 size={13} className="os-tab-icon text-amber" />
+                      <span>BUG SQUASHER</span>
+                      <span className="game-tab-pill">PLAY</span>
+                    </button>
+                  </div>
                 </div>
                 <div className="os-window-controls">
                   <button className="win-btn win-min" aria-label="Minimize">_</button>
                   <button className="win-btn win-max" aria-label="Maximize">❑</button>
-                  <button className="win-btn win-close" aria-label="Close">✕</button>
-                </div>
-              </div>
-
-              {/* Central Interactive Terminal Body */}
-              <div className="os-body font-mono">
-                {/* Scanline line overlay */}
-                <div className="scanline-overlay" />
-
-                {/* Terminal output log */}
-                <div className="terminal-screen" id="terminal-screen">
-                  {terminalLogs.map((log, idx) => (
-                    <div key={idx} className={`term-line term-${log.type}`}>
-                      {log.text}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Command Input Bar */}
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleCommand();
-                  }}
-                  className="terminal-input-bar"
-                >
-                  <span className="input-prompt">&gt;</span>
-                  <input
-                    type="text"
-                    value={terminalInput}
-                    onChange={(e) => {
-                      setTerminalInput(e.target.value);
-                      playClick(520 + Math.random() * 160, 0.015);
+                  <button 
+                    className="win-btn win-close" 
+                    aria-label="Close or Reset"
+                    onClick={() => {
+                      playClick(600, 0.03);
+                      setWorkstationMode('terminal');
                     }}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Type command (e.g. skills, recruiter, hack, help)..."
-                    className="terminal-input"
-                    aria-label="Terminal command input"
-                  />
-                  <button type="submit" className="terminal-submit-btn" aria-label="Run command">
-                    <CornerDownLeft size={14} />
-                  </button>
-                </form>
-
-                {/* Command Presets */}
-                <div className="terminal-presets font-mono">
-                  <span className="presets-label">QUICK EXEC:</span>
-                  <button type="button" onClick={() => handleCommand('skills')} className="preset-btn">
-                    skills
-                  </button>
-                  <button type="button" onClick={() => handleCommand('recruiter')} className="preset-btn">
-                    recruiter
-                  </button>
-                  <button type="button" onClick={() => handleCommand('stack')} className="preset-btn">
-                    stack
-                  </button>
-                  <button type="button" onClick={() => handleCommand('hack')} className="preset-btn">
-                    hack
-                  </button>
-                  <button type="button" onClick={() => handleCommand('arcade')} className="preset-btn" title="Cheat: triggers Overdrive mode">
-                    arcade
-                  </button>
-                  <button type="button" onClick={() => handleCommand('specs')} className="preset-btn">
-                    specs
-                  </button>
-                  <button type="button" onClick={() => handleCommand('coffee')} className="preset-btn">
-                    coffee
-                  </button>
-                  <button type="button" onClick={() => handleCommand('clear')} className="preset-btn">
-                    clear
+                  >
+                    ✕
                   </button>
                 </div>
               </div>
+
+              {workstationMode === 'game' ? (
+                <BugHunterGame onExit={() => setWorkstationMode('terminal')} />
+              ) : (
+                /* Central Interactive Terminal Body */
+                <div className="os-body font-mono">
+                  {/* Scanline line overlay */}
+                  <div className="scanline-overlay" />
+
+                  {/* Terminal output log */}
+                  <div className="terminal-screen" id="terminal-screen">
+                    {terminalLogs.map((log, idx) => (
+                      <div key={idx} className={`term-line term-${log.type}`}>
+                        {log.text}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Command Input Bar */}
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleCommand();
+                    }}
+                    className="terminal-input-bar"
+                  >
+                    <span className="input-prompt">&gt;</span>
+                    <input
+                      type="text"
+                      value={terminalInput}
+                      onChange={(e) => {
+                        setTerminalInput(e.target.value);
+                        playClick(520 + Math.random() * 160, 0.015);
+                      }}
+                      onKeyDown={handleKeyDown}
+                      placeholder="Type command (e.g. game, skills, recruiter, hack)..."
+                      className="terminal-input"
+                      aria-label="Terminal command input"
+                    />
+                    <button type="submit" className="terminal-submit-btn" aria-label="Run command">
+                      <CornerDownLeft size={14} />
+                    </button>
+                  </form>
+
+                  {/* Command Presets */}
+                  <div className="terminal-presets font-mono">
+                    <span className="presets-label">QUICK EXEC:</span>
+                    <button type="button" onClick={() => handleCommand('skills')} className="preset-btn">
+                      skills
+                    </button>
+                    <button type="button" onClick={() => handleCommand('game')} className="preset-btn preset-btn-game" title="Play Bug Squasher mini game">
+                      👾 game
+                    </button>
+                    <button type="button" onClick={() => handleCommand('recruiter')} className="preset-btn">
+                      recruiter
+                    </button>
+                    <button type="button" onClick={() => handleCommand('stack')} className="preset-btn">
+                      stack
+                    </button>
+                    <button type="button" onClick={() => handleCommand('hack')} className="preset-btn">
+                      hack
+                    </button>
+                    <button type="button" onClick={() => handleCommand('arcade')} className="preset-btn" title="Cheat: triggers Overdrive mode">
+                      arcade
+                    </button>
+                    <button type="button" onClick={() => handleCommand('specs')} className="preset-btn">
+                      specs
+                    </button>
+                    <button type="button" onClick={() => handleCommand('coffee')} className="preset-btn">
+                      coffee
+                    </button>
+                    <button type="button" onClick={() => handleCommand('clear')} className="preset-btn">
+                      clear
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Satellite Data Terminal Cards */}

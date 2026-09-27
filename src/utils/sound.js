@@ -165,8 +165,127 @@ export function playPaletteSound() {
     osc.connect(gain);
     gain.connect(ctx.destination);
     osc.start();
-    osc.stop(ctx.currentTime + 0.1);
   } catch {
     // Ignore audio errors
   }
 }
+
+/**
+ * Bug squashed sound: crisp high-energy laser crunch
+ */
+export function playBugSquashSound() {
+  if (isMuted) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  try {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(140, ctx.currentTime + 0.08);
+
+    gain.gain.setValueAtTime(0.06, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.08);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.085);
+  } catch {
+    // Ignore audio playback errors
+  }
+}
+
+/**
+ * Penalty checkmark clicked: discordant system fault buzz
+ */
+export function playPenaltySound() {
+  if (isMuted) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  try {
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc1.type = 'sawtooth';
+    osc2.type = 'sawtooth';
+    osc1.frequency.setValueAtTime(180, ctx.currentTime);
+    osc2.frequency.setValueAtTime(192, ctx.currentTime); // detuned dissonant interval
+
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18);
+
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc1.start();
+    osc2.start();
+    osc1.stop(ctx.currentTime + 0.19);
+    osc2.stop(ctx.currentTime + 0.19);
+  } catch {
+    // Ignore audio playback errors
+  }
+}
+
+/**
+ * Coffee powerup clicked: bright ascending caffeine chime
+ */
+export function playBonusSound() {
+  if (isMuted) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  try {
+    const notes = [784, 1046.5, 1318.5]; // G5, C6, E6
+    notes.forEach((freq, idx) => {
+      setTimeout(() => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.05, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.12);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.13);
+      }, idx * 40);
+    });
+  } catch {
+    // Ignore audio playback errors
+  }
+}
+
+/**
+ * Game over / postmortem jingle
+ */
+export function playGameOverSound() {
+  if (isMuted) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  try {
+    const notes = [440, 392, 349, 293.66];
+    notes.forEach((freq, idx) => {
+      setTimeout(() => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.045, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.22);
+      }, idx * 90);
+    });
+  } catch {
+    // Ignore audio playback errors
+  }
+}
+
