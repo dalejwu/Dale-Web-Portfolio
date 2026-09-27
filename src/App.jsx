@@ -7,16 +7,22 @@ import Contact from './components/Contact';
 import BinaryRain from './components/BinaryRain';
 import ClickSpark from './components/ClickSpark';
 import KonamiOverdrive from './components/KonamiOverdrive';
+import IntroSequence from './components/IntroSequence';
 import { initAudio, isAudioEnabled, toggleAudio, playClick } from './utils/sound';
 import './App.css';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('hero');
   const [sfxEnabled, setSfxEnabled] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
     initAudio();
     setSfxEnabled(isAudioEnabled());
+
+    const handleReplayIntro = () => setShowIntro(true);
+    window.addEventListener('replay-intro', handleReplayIntro);
+    return () => window.removeEventListener('replay-intro', handleReplayIntro);
   }, []);
 
   const handleAudioToggle = () => {
@@ -26,6 +32,9 @@ export default function App() {
 
   return (
     <div className="portfolio-app">
+      {/* Cyber-Terminal Kernel Bootloader Intro */}
+      {showIntro && <IntroSequence onComplete={() => setShowIntro(false)} />}
+
       {/* Subtle Binary Code Rain Canvas */}
       <BinaryRain />
 

@@ -127,6 +127,17 @@ export default function Workstation() {
           text: '☕ COFFEE PIPELINE: 418 I\'m a teapot (and a systems architect). Current caffeine capacity: 96% optimal.'
         });
         break;
+      case 'reboot':
+      case 'boot':
+      case 'intro':
+        newLogs.push({
+          type: 'res',
+          text: '🔄 REBOOTING SYSTEM // RELOADING KERNEL BOOTLOADER SEQUENCE...'
+        });
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('replay-intro'));
+        }, 400);
+        break;
       case 'sudo':
       case 'sudo su':
         newLogs.push({
