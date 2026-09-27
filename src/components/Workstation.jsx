@@ -117,7 +117,7 @@ export default function Workstation() {
       case 'hack':
         newLogs.push({
           type: 'res',
-          text: '⚡ ACCESSING MAINFRAME... [STATUS: 200 OK] // ROOT KEY BYPASS: "DALE_KERNEL_SEC" // SYSTEM RUNNING IN NOMINAL MODE.'
+          text: '⚡ ACCESSING MAINFRAME... [STATUS: 200 OK] // ROOT KEY BYPASS: "DALE_KERNEL_SEC" // HINT: Type the Konami Code on your keyboard (↑ ↑ ↓ ↓ ← → ← → B A) to engage Overdrive mode!'
         });
         break;
       case 'coffee':
