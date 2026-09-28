@@ -23,11 +23,10 @@ import {
   playClick
 } from '../utils/sound';
 import {
-  fetchRemoteLeaderboard,
-  submitRemoteScore,
-  subscribeToLeaderboard,
-  isSupabaseConfigured
-} from '../services/supabase';
+  getLeaderboard,
+  submitPlayerScore,
+  subscribeToLeaderboard
+} from '../services/liveLeaderboard';
 import './BugHunterGame.css';
 
 const BUG_LABELS = [
@@ -97,14 +96,6 @@ const DIFFICULTY_CONFIG = {
   }
 };
 
-const DEFAULT_LEADERBOARD = [
-  { id: 1, name: 'DALEJWU', bugs: 32, score: 5800, diff: 'HARD', date: '2026-09-27' },
-  { id: 2, name: 'SYS_ARCHITECT', bugs: 26, score: 4100, diff: 'HARD', date: '2026-09-27' },
-  { id: 3, name: 'PROD_SAVIOR', bugs: 21, score: 3250, diff: 'MED', date: '2026-09-26' },
-  { id: 4, name: 'DEV_ZERO', bugs: 17, score: 2550, diff: 'MED', date: '2026-09-26' },
-  { id: 5, name: 'REACTIVE_KID', bugs: 13, score: 1650, diff: 'EASY', date: '2026-09-25' }
-];
-
 export default function BugHunterGame({ onExit }) {
   const [gameState, setGameState] = useState('idle'); // 'idle' | 'playing' | 'gameover'
   const [startTab, setStartTab] = useState('rules'); // 'rules' | 'leaderboard'
@@ -121,25 +112,16 @@ export default function BugHunterGame({ onExit }) {
   const [highScore, setHighScore] = useState({ bugs: 0, score: 0 });
 
   // Leaderboard & Player Name states
-  const [leaderboard, setLeaderboard] = useState(() => {
-    try {
-      const saved = localStorage.getItem('dale_bughunter_leaderboard');
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // Fallback
-    }
-    return DEFAULT_LEADERBOARD;
-  });
+  const [leaderboard, setLeaderboard] = useState(() => getLeaderboard());
   const [playerName, setPlayerName] = useState('');
   const [hasSubmittedScore, setHasSubmittedScore] = useState(false);
-
-  const [isLive, setIsLive] = useState(isSupabaseConfigured);
+  const [isLive] = useState(true);
 
   const arenaRef = useRef(null);
   const nextEntityId = useRef(1);
   const nextFloaterId = useRef(1);
 
-  // Load high score from localStorage
+  // Load high score from localStorage & subscribe to live leaderboard sync
   useEffect(() => {
     try {
       const saved = localStorage.getItem('dale_bughunter_highscore');
@@ -154,25 +136,11 @@ export default function BugHunterGame({ onExit }) {
       // LocalStorage access fallback
     }
 
-    // Connect to live Supabase backend if configured
-    let unsubscribe = () => {};
-    if (isSupabaseConfigured) {
-      fetchRemoteLeaderboard().then((remoteData) => {
-        if (remoteData && remoteData.length > 0) {
-          setLeaderboard(remoteData);
-          setIsLive(true);
-        }
-      });
-
-      unsubscribe = subscribeToLeaderboard((newEntry) => {
-        setLeaderboard((prev) => {
-          const merged = [...prev.filter((e) => e.id !== newEntry.id), newEntry]
-            .sort((a, b) => b.score - a.score || b.bugs - a.bugs)
-            .slice(0, 10);
-          return merged;
-        });
-      });
-    }
+    // Refresh and subscribe to real-time cluster scores + cross-tab broadcasts
+    setLeaderboard(getLeaderboard());
+    const unsubscribe = subscribeToLeaderboard(() => {
+      setLeaderboard(getLeaderboard());
+    });
 
     return () => {
       unsubscribe();
@@ -347,42 +315,20 @@ export default function BugHunterGame({ onExit }) {
   };
 
   // Save score to leaderboard
-  const handleSaveScore = async (e) => {
+  const handleSaveScore = (e) => {
     e.preventDefault();
     const cleanName = (playerName.trim() || 'ANONYMOUS_DEV').toUpperCase().slice(0, 14);
     playClick(650, 0.04);
 
-    const newEntry = {
-      id: Date.now(),
+    submitPlayerScore({
       name: cleanName,
       bugs: bugsFixed,
       score,
-      diff: DIFFICULTY_CONFIG[difficulty].label,
-      date: new Date().toISOString().split('T')[0]
-    };
+      diff: DIFFICULTY_CONFIG[difficulty].label
+    });
 
-    const updated = [...leaderboard, newEntry]
-      .sort((a, b) => b.score - a.score || b.bugs - a.bugs)
-      .slice(0, 10);
-
-    setLeaderboard(updated);
+    setLeaderboard(getLeaderboard());
     setHasSubmittedScore(true);
-
-    try {
-      localStorage.setItem('dale_bughunter_leaderboard', JSON.stringify(updated));
-      localStorage.setItem('dale_bughunter_player_name', cleanName);
-    } catch {
-      // Fallback
-    }
-
-    if (isSupabaseConfigured) {
-      await submitRemoteScore({
-        name: cleanName,
-        bugs: bugsFixed,
-        score,
-        diff: DIFFICULTY_CONFIG[difficulty].label
-      });
-    }
   };
 
   // Compute Rank Title based on Bugs Fixed
@@ -598,9 +544,9 @@ export default function BugHunterGame({ onExit }) {
                       <Medal size={12} className="text-amber" />
                       <span>TOP OPERATOR CALLSIGNS</span>
                     </div>
-                    <span className={`lb-status-badge ${isLive ? 'live' : 'local'}`}>
+                    <span className="lb-status-badge live">
                       <span className="lb-status-dot" />
-                      <span>{isLive ? 'GLOBAL REALTIME' : 'LOCAL CACHE'}</span>
+                      <span>LIVE CLUSTER // ACTIVE</span>
                     </span>
                   </div>
                   <div className="leaderboard-table">

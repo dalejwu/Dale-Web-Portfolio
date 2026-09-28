@@ -122,7 +122,6 @@ skills-lock.json
 targets/
 strix_runs/
 *.sql
-!supabase_leaderboard.sql
 *.sqlite
 *.db
 sec_test_cookies*.txt
