@@ -27,7 +27,6 @@ export default function Timeline() {
       role: 'FULL-STACK SOFTWARE ENGINEER & SYSTEM ARCHITECT',
       organization: 'Enterprise Cloud & Client Platforms',
       category: 'industry',
-      badge: 'ACTIVE POSITION',
       isCurrent: true,
       summary: 'Directing core web platform architecture, distributed service integration, and client-facing digital experiences.',
       highlights: [
@@ -44,7 +43,6 @@ export default function Timeline() {
       role: 'FULL-STACK DEVELOPER',
       organization: 'Digital Web Solutions Lab',
       category: 'industry',
-      badge: 'PRODUCTION SCALE',
       isCurrent: false,
       summary: 'Engineered responsive web applications, backend REST APIs, and database schemas for commercial client platforms.',
       highlights: [
@@ -58,17 +56,17 @@ export default function Timeline() {
       id: 'wmsu-undergrad',
       year: 'UNDERGRADUATE // COLLEGE',
       phase: 'PHASE // 02',
-      role: 'UNDERGRADUATE // B.S. IN COMPUTER SCIENCE / IT',
+      role: 'UNDERGRADUATE // B.S. IN COMPUTER SCIENCE',
       organization: 'Western Mindanao State University',
       category: 'academic',
       badge: 'COLLEGE (UNDERGRAD)',
       logo: '/wmsu-seal.jpg',
       isCurrent: false,
-      summary: 'Rigorous undergraduate curriculum in computer science and information technology, mastering systems design, algorithm analysis, web technologies, and database engineering at Western Mindanao State University.',
+      summary: 'Rigorous undergraduate curriculum in computer science, mastering systems design, algorithm analysis, web technologies, and database engineering at Western Mindanao State University.',
       highlights: [
         'Mastered core and advanced computing coursework: algorithms, data structures, systems architecture, and database systems',
         'Engineered comprehensive academic capstone platforms and collaborative software projects with modern component design',
-        'Demonstrated strong technical problem solving, academic excellence, and leadership in collegiate IT activities'
+        'Demonstrated strong technical problem solving, academic excellence, and leadership in collegiate computing organizations'
       ],
       technologies: ['Software Architecture', 'Web Technologies', 'Java', 'SQL / Relational DBs', 'Algorithms & Data Structures']
     },
@@ -150,7 +148,7 @@ export default function Timeline() {
             FROM FIRST 'HELLO WORLD' TO PRODUCTION ARCHITECT
           </h2>
           <p className="timeline-subtitle font-mono">
-            // THE CHRONOLOGY: ACADEMIC FOUNDATIONS, COMMERCIAL SCALE &amp; SYSTEM ARCHITECTURE
+            // ACADEMIC FOUNDATIONS, COMMERCIAL SCALE &amp; SYSTEM ARCHITECTURE
           </p>
         </div>
 
@@ -200,9 +198,11 @@ export default function Timeline() {
                           <Calendar size={13} className="meta-icon" />
                           {milestone.year}
                         </span>
-                        <span className={`node-badge ${milestone.isCurrent ? 'badge-live' : ''}`}>
-                          {milestone.badge}
-                        </span>
+                        {milestone.badge && (
+                          <span className={`node-badge ${milestone.isCurrent ? 'badge-live' : ''}`}>
+                            {milestone.badge}
+                          </span>
+                        )}
                       </div>
 
                       <div className="node-titles">

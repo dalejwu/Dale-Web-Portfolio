@@ -95,8 +95,12 @@
 .audio-toggle-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
-  padding: 0.45rem 0.75rem;
+  padding: 0 0.75rem;
+  min-height: 30px;
+  height: 30px;
+  box-sizing: border-box;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-subtle);
   color: var(--text-muted);
@@ -121,10 +125,32 @@
   box-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
 }
 
+.header-actions-group .header-cta,
 .header-cta {
   display: inline-flex;
-  font-size: 0.75rem;
-  padding: 0.5rem 1rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.75rem;
+  min-height: 30px;
+  height: 30px;
+  box-sizing: border-box;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--text-primary);
+  border-radius: 2px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.header-actions-group .header-cta:hover,
+.header-cta:hover {
+  background: var(--text-primary);
+  color: var(--bg-void);
+  transform: none;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 /* Main */
@@ -332,7 +358,7 @@
   }
 
   .header-cta {
-    padding: 0.45rem 0.85rem;
+    padding: 0 0.65rem;
     font-size: 0.6875rem;
   }
 

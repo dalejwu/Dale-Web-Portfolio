@@ -98,22 +98,22 @@ export default function SchemaGraph() {
   const [nodes, setNodes] = useState(INITIAL_NODES);
   const [activeNode, setActiveNode] = useState('appointments');
   const [draggedNode, setDraggedNode] = useState(null);
-  const [isSimulating, setIsSimulating] = useState(true);
-  const [telemetryEvent, setTelemetryEvent] = useState('ACID_LOCK // ISOLATION_LEVEL_SERIALIZABLE');
+  const [telemetryEvent, setTelemetryEvent] = useState('SCHEMA // READY');
 
   const containerRef = useRef(null);
   const dragOffsetRef = useRef({ x: 0, y: 0 });
 
-  // Spring physics reset
+  // Reset table positions
   const resetLayout = useCallback(() => {
     setNodes(INITIAL_NODES);
     setActiveNode('appointments');
-    setTelemetryEvent('SCHEMA_LAYOUT_RESET // CANONICAL_COORDINATES');
+    setTelemetryEvent('SCHEMA // CANONICAL POSITIONS');
   }, []);
 
-  // Pointer drag handling with spring physics
+  // Pointer drag handling
   const handlePointerDown = (nodeId, e) => {
     e.stopPropagation();
+    e.preventDefault();
     const rect = e.currentTarget.getBoundingClientRect();
     dragOffsetRef.current = {
       x: e.clientX - rect.left,
@@ -121,7 +121,7 @@ export default function SchemaGraph() {
     };
     setDraggedNode(nodeId);
     setActiveNode(nodeId);
-    setTelemetryEvent(`DRAG_FOCUS // TABLE: ${nodeId.toUpperCase()} [ACTIVE SPRING]`);
+    setTelemetryEvent(`DRAGGING // ${nodeId.toUpperCase()}`);
   };
 
   const handlePointerMove = useCallback((e) => {
@@ -149,7 +149,7 @@ export default function SchemaGraph() {
 
   const handlePointerUp = useCallback(() => {
     if (draggedNode) {
-      setTelemetryEvent(`EQUILIBRIUM // TABLE: ${draggedNode.toUpperCase()} LOCKED AT (x:${nodes[draggedNode]?.x}, y:${nodes[draggedNode]?.y})`);
+      setTelemetryEvent(`TABLE: ${draggedNode.toUpperCase()} (x:${nodes[draggedNode]?.x}, y:${nodes[draggedNode]?.y})`);
       setDraggedNode(null);
     }
   }, [draggedNode, nodes]);

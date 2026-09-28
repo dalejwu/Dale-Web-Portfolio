@@ -24,36 +24,35 @@
   }
 }
 
-/* Overdrive Toast Banner */
+/* Overdrive Toast Banner (Anchored to the side) */
 .overdrive-toast {
   position: fixed;
-  top: 84px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 24px;
+  right: 24px;
   z-index: 1000;
-  max-width: 780px;
-  width: calc(100% - 2rem);
-  padding: 1.15rem 1.4rem;
+  max-width: 740px;
+  width: calc(100% - 3rem);
+  padding: 1rem 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1.25rem;
   background: rgba(12, 6, 20, 0.94);
   border: 1px solid var(--accent-cyan);
   box-shadow: 0 10px 40px rgba(255, 0, 127, 0.35), inset 0 0 24px rgba(0, 255, 204, 0.15);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  animation: slide-down-toast 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slide-up-toast 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes slide-down-toast {
+@keyframes slide-up-toast {
   from {
     opacity: 0;
-    transform: translate(-50%, -24px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translateY(0);
   }
 }
 
@@ -104,8 +103,8 @@
 .overdrive-palette-selector {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  gap: 0.45rem;
+  flex-wrap: nowrap;
   margin-top: 0.25rem;
 }
 
@@ -113,7 +112,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.25rem 0.65rem;
+  padding: 0.25rem 0.55rem;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: var(--text-secondary);
@@ -123,6 +122,8 @@
   cursor: pointer;
   border-radius: 2px;
   transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .palette-chip-btn .chip-dot {
@@ -290,7 +291,12 @@ body.overdrive-mode .status-dot {
   .overdrive-toast {
     flex-direction: column;
     align-items: flex-start;
-    top: 72px;
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+    max-width: none;
+    padding: 1rem;
   }
   .overdrive-actions {
     width: 100%;

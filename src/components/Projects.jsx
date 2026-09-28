@@ -23,7 +23,6 @@ export default function Projects() {
       title: 'Serene Dental Clinic // Healthcare Platform',
       category: 'fullstack',
       year: '2024',
-      badge: 'PRODUCTION LIVE',
       metric: 'Sub-second FCP · Zamboanga City branch',
       image: sereneDentalImg,
       summary: 'Aesthetic, high-performance dental clinic web application featuring patient consultation booking, service discovery, and treatment workflows.',
@@ -82,15 +81,6 @@ export default function Projects() {
             <span className="badge-bullet">// 03</span>
             <span>SYSTEMS ARCHIVE</span>
           </div>
-
-          <div className="bracket-container projects-status-badge font-mono">
-            <div className="corner-bracket tl" />
-            <div className="corner-bracket tr" />
-            <div className="corner-bracket bl" />
-            <div className="corner-bracket br" />
-            <span className="status-live-dot" />
-            <span>FLAGSHIP ARCHITECTURE // ARCHIVE-01</span>
-          </div>
         </div>
 
         {/* Section Title Banner */}
@@ -99,7 +89,7 @@ export default function Projects() {
             STUFF I'VE SHIPPED BEFORE 03:00 AM
           </h2>
           <p className="projects-subtitle font-mono">
-            // PRODUCTION ARCHITECTURE: HIGH-PERFORMANCE WEB APPS, CLINICAL WORKFLOWS &amp; INTERACTIVE SCHEMAS
+            // HIGH-PERFORMANCE WEB APPS, CLINICAL WORKFLOWS &amp; INTERACTIVE SCHEMAS
           </p>
         </div>
 
@@ -126,7 +116,6 @@ export default function Projects() {
                     <span className="card-browser-url">{project.demo.replace('https://', '').replace('/', '')}</span>
                   </div>
                   <div className="card-browser-right">
-                    <span className="visual-badge">{project.badge}</span>
                     <span className="visual-year">{project.year}</span>
                   </div>
                 </div>
@@ -269,7 +258,6 @@ export default function Projects() {
                 >
                   <Database size={12} className="text-green" />
                   <span>INTERACTIVE ER SCHEMA</span>
-                  <span className="mode-live-pill">LIVE 60FPS</span>
                 </button>
               </div>
 
@@ -315,7 +303,6 @@ export default function Projects() {
                 )}
 
                 <div className="modal-visual-card">
-                  <span className="modal-badge-pill font-mono">{activeModalProject.badge}</span>
                   <h3 id="modal-title" className="modal-title font-display">
                     {activeModalProject.title}
                   </h3>

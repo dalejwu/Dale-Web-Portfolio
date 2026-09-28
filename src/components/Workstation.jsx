@@ -226,28 +226,6 @@ export default function Workstation() {
             <span className="badge-bullet">// 01</span>
             <span>DEVELOPER WORKSTATION</span>
           </div>
-
-          <div className="workstation-heading-right">
-            <button
-              type="button"
-              onClick={() => {
-                playClick(600, 0.03);
-                setWorkstationMode((m) => (m === 'terminal' ? 'game' : 'terminal'));
-              }}
-              className={`workstation-game-pill font-mono ${workstationMode === 'game' ? 'active' : ''}`}
-              title="Toggle Bug Squasher mini game"
-              aria-label="Toggle Bug Squasher mini game"
-            >
-              <Gamepad2 size={13} className="pill-game-icon" />
-              <span>{workstationMode === 'game' ? 'VIEW TERMINAL' : 'MINI-GAME: BUG SQUASHER'}</span>
-              <span className="pill-pulse-dot" />
-            </button>
-
-            <span className="status-indicator">
-              <span className="status-dot"></span>
-              <span>OS TELEMETRY ACTIVE</span>
-            </span>
-          </div>
         </div>
 
         {/* Workstation Grid Layout */}
@@ -434,34 +412,13 @@ export default function Workstation() {
               <div className="corner-bracket br" />
 
               <h2 className="manifesto-title font-display">
-                SYSTEM<br />
-                ARCHITECT
+                SYSTEM ARCHITECT
               </h2>
 
               <p className="manifesto-quote font-mono">
                 "I approach software engineering as a strategic foundation. My focus is on architecting systems
                 that are efficient, resilient under peak load, and structured to adapt cleanly as products expand."
               </p>
-
-              {/* Live Telemetry Matrix */}
-              <div className="telemetry-readout font-mono">
-                <div className="readout-row">
-                  <span className="readout-label">KERNEL VERSION:</span>
-                  <span className="readout-value">v2.6.4-STABLE</span>
-                </div>
-                <div className="readout-row">
-                  <span className="readout-label">SYSTEM UPTIME:</span>
-                  <span className="readout-value text-green">99.98% SLA</span>
-                </div>
-                <div className="readout-row">
-                  <span className="readout-label">LATENCY FLOOR:</span>
-                  <span className="readout-value">&lt; 35ms AVG</span>
-                </div>
-                <div className="readout-row">
-                  <span className="readout-label">PRIMARY PROTOCOL:</span>
-                  <span className="readout-value">HTTP/2, WSS, REST</span>
-                </div>
-              </div>
 
               {/* Tech Stack Matrix with Filter Tabs */}
               <div className="tech-matrix-box">

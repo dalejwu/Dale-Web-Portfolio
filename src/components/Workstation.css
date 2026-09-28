@@ -427,11 +427,12 @@
 }
 
 .manifesto-title {
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  line-height: 0.9;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
   color: var(--text-primary);
   margin-bottom: 1.25rem;
+  white-space: nowrap;
 }
 
 .manifesto-quote {

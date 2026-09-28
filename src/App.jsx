@@ -54,13 +54,7 @@ export default function App() {
             <span className="logo-bracket">[</span>
             <span className="logo-name">DALEJWU</span>
             <span className="logo-bracket">]</span>
-            <span className="logo-sub">// PAÑA.OS</span>
           </a>
-
-          <div className="status-pill status-indicator">
-            <span className="status-dot"></span>
-            <span>SYS.ONLINE // OPEN TO WORK</span>
-          </div>
 
           <nav className="desktop-nav">
             <a href="#workstation" className="nav-item" onClick={() => playClick(480, 0.025)}><span>01</span> WORKSTATION</a>
@@ -81,7 +75,7 @@ export default function App() {
               <span>{sfxEnabled ? 'SFX: ON' : 'SFX: OFF'}</span>
             </button>
 
-            <a href="#contact" className="btn-cyber-outline header-cta" onClick={() => playClick(540, 0.03)}>
+            <a href="#contact" className="btn-cyber-outline header-cta font-mono" onClick={() => playClick(540, 0.03)}>
               INITIATE CONTACT
             </a>
           </div>
@@ -101,11 +95,6 @@ export default function App() {
               <div className="corner-bracket br" />
 
               <div className="hero-content">
-                <div className="hero-badge font-mono">
-                  <Terminal size={14} className="badge-icon" />
-                  <span>INITIALIZING WORKSPACE // v2.6.4</span>
-                </div>
-
                 <h1 className="hero-title font-display">
                   FLORENZ DALE C. PAÑA
                 </h1>
@@ -174,7 +163,6 @@ export default function App() {
         <div className="container footer-inner">
           <div className="footer-left font-mono">
             <span>&copy; {new Date().getFullYear()} FLORENZ DALE C. PAÑA. ALL RIGHTS RESERVED.</span>
-            <span className="footer-dim">// CYBER-TERMINAL WORKSTATION</span>
           </div>
 
           <div className="footer-socials">

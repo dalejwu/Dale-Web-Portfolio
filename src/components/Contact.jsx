@@ -142,11 +142,6 @@ export default function Contact() {
             <span className="badge-bullet">// 04</span>
             <span>COMMUNICATION CONDUIT</span>
           </div>
-
-          <div className="status-indicator">
-            <span className="status-dot"></span>
-            <span>PORT 443 // READY TO CONNECT</span>
-          </div>
         </div>
 
         {/* Section Title Banner */}
@@ -155,7 +150,7 @@ export default function Contact() {
             INITIATE CONTACT
           </h2>
           <p className="contact-subtitle font-mono">
-            // DIRECT CONDUIT: NO ROBOCALLS, NO SPAM // STRICTLY HIGH-IMPACT ROLES &amp; SYSTEMS ARCHITECTURE
+            // NO ROBOCALLS, NO SPAM // STRICTLY HIGH-IMPACT ROLES &amp; SYSTEMS ARCHITECTURE
           </p>
         </div>
 
