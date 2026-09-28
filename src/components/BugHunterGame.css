@@ -425,12 +425,54 @@
 .leaderboard-header {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  justify-content: space-between;
+  gap: 0.5rem;
   font-size: 0.6875rem;
   font-weight: 700;
   color: var(--accent-amber);
   margin-bottom: 0.5rem;
   letter-spacing: 0.06em;
+}
+
+.leaderboard-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.lb-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.5625rem;
+  padding: 0.12rem 0.45rem;
+  border-radius: 2px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.lb-status-badge.live {
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  color: var(--accent-green);
+}
+
+.lb-status-badge.local {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+}
+
+.lb-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.lb-status-badge.live .lb-status-dot {
+  box-shadow: 0 0 6px var(--accent-green);
+  animation: pulse-dot 1.5s infinite;
 }
 
 .leaderboard-table {

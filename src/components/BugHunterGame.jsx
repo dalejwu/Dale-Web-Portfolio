@@ -22,6 +22,12 @@ import {
   playGameOverSound,
   playClick
 } from '../utils/sound';
+import {
+  fetchRemoteLeaderboard,
+  submitRemoteScore,
+  subscribeToLeaderboard,
+  isSupabaseConfigured
+} from '../services/supabase';
 import './BugHunterGame.css';
 
 const BUG_LABELS = [
@@ -127,6 +133,8 @@ export default function BugHunterGame({ onExit }) {
   const [playerName, setPlayerName] = useState('');
   const [hasSubmittedScore, setHasSubmittedScore] = useState(false);
 
+  const [isLive, setIsLive] = useState(isSupabaseConfigured);
+
   const arenaRef = useRef(null);
   const nextEntityId = useRef(1);
   const nextFloaterId = useRef(1);
@@ -145,6 +153,30 @@ export default function BugHunterGame({ onExit }) {
     } catch {
       // LocalStorage access fallback
     }
+
+    // Connect to live Supabase backend if configured
+    let unsubscribe = () => {};
+    if (isSupabaseConfigured) {
+      fetchRemoteLeaderboard().then((remoteData) => {
+        if (remoteData && remoteData.length > 0) {
+          setLeaderboard(remoteData);
+          setIsLive(true);
+        }
+      });
+
+      unsubscribe = subscribeToLeaderboard((newEntry) => {
+        setLeaderboard((prev) => {
+          const merged = [...prev.filter((e) => e.id !== newEntry.id), newEntry]
+            .sort((a, b) => b.score - a.score || b.bugs - a.bugs)
+            .slice(0, 10);
+          return merged;
+        });
+      });
+    }
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   // Spawn floater feedback animation
@@ -315,7 +347,7 @@ export default function BugHunterGame({ onExit }) {
   };
 
   // Save score to leaderboard
-  const handleSaveScore = (e) => {
+  const handleSaveScore = async (e) => {
     e.preventDefault();
     const cleanName = (playerName.trim() || 'ANONYMOUS_DEV').toUpperCase().slice(0, 14);
     playClick(650, 0.04);
@@ -341,6 +373,15 @@ export default function BugHunterGame({ onExit }) {
       localStorage.setItem('dale_bughunter_player_name', cleanName);
     } catch {
       // Fallback
+    }
+
+    if (isSupabaseConfigured) {
+      await submitRemoteScore({
+        name: cleanName,
+        bugs: bugsFixed,
+        score,
+        diff: DIFFICULTY_CONFIG[difficulty].label
+      });
     }
   };
 
@@ -553,8 +594,14 @@ export default function BugHunterGame({ onExit }) {
                 /* Leaderboard View on Start Screen */
                 <div className="leaderboard-view font-mono">
                   <div className="leaderboard-header">
-                    <Medal size={12} className="text-amber" />
-                    <span>TOP OPERATOR CALLSIGNS</span>
+                    <div className="leaderboard-header-left">
+                      <Medal size={12} className="text-amber" />
+                      <span>TOP OPERATOR CALLSIGNS</span>
+                    </div>
+                    <span className={`lb-status-badge ${isLive ? 'live' : 'local'}`}>
+                      <span className="lb-status-dot" />
+                      <span>{isLive ? 'GLOBAL REALTIME' : 'LOCAL CACHE'}</span>
+                    </span>
                   </div>
                   <div className="leaderboard-table">
                     {leaderboard.slice(0, 5).map((entry, idx) => (
